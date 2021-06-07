@@ -1,0 +1,279 @@
+openapi: '3.0.2'
+
+info:
+  title: Game Start API
+  version: v1
+  description: |
+    ### API para nuestro proyecto final de curso Api Evangelist, de la fundación APIAddicts
+  license:
+    name: Open Software License 3.0
+    url: https://opensource.org/licenses/OSL-3.0
+  contact:
+    name: Jacob de las Peñas | Marcos Carretero Poblete
+    email: jacob@cloudappi.net
+
+servers:
+  - url: https://api.server.com
+
+# security:
+#   - wso2_ldap:
+#     description: User authorization using LDAP
+#     type: 'oauth2'
+#     tokenUrl: https://example.com/oauth/token
+#     flow: 'password'
+#   - wso2_365:
+#     description: User authorization using Office 365
+#     type: 'oauth2'
+#     flow: accessCode
+#     authorizationUrl: https://example.com/oauth/authorize
+#     tokenUrl: https://example.com/oauth/token
+
+paths:
+  /consoles:
+    get:
+
+    post:
+
+  /consoles/{consoleId}:
+    get:
+
+    patch:
+
+    delete:
+
+  /employees:
+    get:
+
+    post:
+
+  /employees/{employeeId}:
+    get:
+
+    patch:
+
+  /games:
+    get:
+
+    post:
+
+  /games/{gameId}:
+    get:
+
+    patch:
+
+    delete:
+
+  /orders:
+    get:
+
+    post:
+
+  /orders/{orderId}:
+    get:
+
+    patch:
+
+  /questions:
+    get:
+
+    post:
+
+  /questions/{questionId}:
+    get:
+
+    patch:
+
+  /returns:
+    get:
+
+    post:
+
+  /returns/{returnId}:
+    get:
+
+    patch:
+
+  /users:
+    post:
+
+  /users/{userId}:
+    patch:
+
+    delete:
+
+  /users/me:
+    get:
+
+    patch:
+
+  /users/me/orders:
+    get:
+
+  /users/me/questions:
+    get:
+
+  /users/me/returns:
+    get:
+
+  /users/password-reset:
+    post:
+
+components:
+  schemas:
+    _uuid:
+      type: string
+      format: uuid
+      minLength: 36
+      maxLength: 36
+      pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
+      example: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+    
+    _email:
+      type: string
+      # faltan maxLength y minLength
+      format: email
+      example: jacob@cloudappi.net
+    
+    _password:
+      type: string
+      # faltan maxLength y minLength
+      format: password
+      example: thisisapassword
+
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Jacob
+        family_name_1:
+          type: string
+          example: Carretero
+        family_name_2:
+          type: string
+          example: Poblete
+        email:
+          $ref: '#/components/schemas/_email'
+        password:
+          $ref: '#/components/schemas/_password'
+
+    employee:
+      type: object
+      properties:
+        login:
+          description: Exclusive login for an employee, given by the administrator
+          type: string
+          maxLength: 8
+          minLength: 8
+          example: Y21J7mo4
+        password:
+          $ref: '#/components/schemas/_password'
+        isActive:
+          description: Boolean describing the active state of the employee
+          type: boolean
+          example: true
+
+    game:
+      type: object
+      properties:
+        name:
+          description: Name of the game
+          type: string
+          example: Candy Crush
+        developer:
+          description: Developer company of the game
+          type: string
+          example: Frictional Games
+        category:
+          description: Category of the game
+        PEGI:
+          description: Pan European Game Information
+          type: string
+          example: '+18'
+        explicitContent: 
+          description: Array of advisories for explicit content
+          type: array
+          items:
+            type: string
+            example: violence
+        numberOfPlayers:
+          description: How many players can play at the same time
+        synopsis:
+          description: Short description of the game
+        price:
+          description: Price of the game, in euros
+        launchDate:
+          description: Date of the game's launch, ISO-8601 format
+        resupplyDate:
+          description: Date of game's resupply, ISO-8601 format
+
+    console:
+
+    question:
+
+    order:
+
+    return:
+
+  responses:
+
+  requestBodies:
+
+  parameters:
+    uuidParam:
+      name: uuid
+      in: path
+      description: Identifier of a resource, in UUID v4 format
+      required: true
+      schema:
+        $ref: '#/components/schemas/_uuid'
+    # Query Params
+    excludeParam:
+      in: query
+      name: $exclude
+      required: false
+      description: |
+        Array of resource attributes excluded in result.
+      schema:
+        type: string
+
+    selectParam:
+      in: query
+      name: $select
+      required: false
+      description: | 
+        Array of the resource attributes that are included in result.
+      schema:
+        type: string
+
+    limitParam:
+      in: query
+      name: $limit
+      required: true
+      description: | 
+        Maximum number of records per page.
+      schema:
+        type: integer
+        default: 25
+        minimum: 0
+        maximum: 25
+
+    offsetParam:
+      in: query
+      name: $offset
+      required: true
+      description: | 
+        Page number. (First page is 0).
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    
+    expandParam:
+      in: query
+      name: $expand
+      required: false
+      description: |  
+        Array of subattributes to be expanded.
+      schema: 
+        type: string
