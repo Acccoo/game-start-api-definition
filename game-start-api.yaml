@@ -31,92 +31,162 @@ servers:
 paths:
   /consoles:
     get:
+      tags:
+        - Consoles
 
     post:
+      tags:
+        - Consoles
 
   /consoles/{consoleId}:
     get:
+      tags:
+        - Consoles
 
     patch:
+      tags:
+        - Consoles
 
     delete:
+      tags:
+        - Consoles
 
   /employees:
     get:
+      tags:
+        - Employees
 
     post:
+      tags:
+        - Employees
 
   /employees/{employeeId}:
     get:
+      tags:
+        - Employees
 
     patch:
+      tags:
+        - Employees
 
   /games:
     get:
+      tags:
+        - Games
 
     post:
+      tags:
+        - Games
 
   /games/{gameId}:
     get:
+      tags:
+        - Games
 
     patch:
+      tags:
+        - Games
 
     delete:
+      tags:
+        - Games
 
   /orders:
     get:
+      tags:
+        - Orders
 
     post:
+      tags:
+        - Orders
 
   /orders/{orderId}:
     get:
+      tags:
+        - Orders
 
     patch:
+      tags:
+        - Orders
 
   /questions:
     get:
+      tags:
+        - Questions
 
     post:
+      tags:
+        - Questions
 
   /questions/{questionId}:
     get:
+      tags:
+        - Questions
 
     patch:
+      tags:
+        - Questions
 
   /returns:
     get:
+      tags:
+        - Returns
 
     post:
+      tags:
+        - Returns
 
   /returns/{returnId}:
     get:
+      tags:
+        - Returns
 
     patch:
+      tags:
+        - Returns
 
   /users:
     post:
+      tags:
+        - Users
 
   /users/{userId}:
     patch:
+      tags:
+        - Users
 
     delete:
+      tags:
+        - Users
 
   /users/me:
     get:
+      tags:
+        - Users
 
     patch:
+      tags:
+        - Users
 
   /users/me/orders:
     get:
+      tags:
+        - Orders
 
   /users/me/questions:
     get:
+      tags:
+        - Questions
 
   /users/me/returns:
     get:
+      tags:
+        - Returns
 
   /users/password-reset:
     post:
+      tags:
+        - Users
 
 components:
   schemas:
@@ -128,6 +198,11 @@ components:
       pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       example: 1b90aa6b-4720-48d2-ac1d-4229668233e5
     
+    _date:
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+
     _email:
       type: string
       # faltan maxLength y minLength
@@ -186,6 +261,8 @@ components:
           example: Frictional Games
         category:
           description: Category of the game
+          type: string
+          example: FPS
         PEGI:
           description: Pan European Game Information
           type: string
@@ -198,24 +275,213 @@ components:
             example: violence
         numberOfPlayers:
           description: How many players can play at the same time
+          type: string
+          example: '2'
         synopsis:
           description: Short description of the game
+          type: string
+          example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
         price:
           description: Price of the game, in euros
+          type: number
+          format: double
+          example: 9.99
         launchDate:
           description: Date of the game's launch, ISO-8601 format
+          $ref: '#/components/schemas/_date'
         resupplyDate:
           description: Date of game's resupply, ISO-8601 format
+          $ref: '#/components/schemas/_date'
 
     console:
+      type: object
+      properties:
+        name:
+          description: Name of the console
+          type: string
+          example: Playstation 4
+        brand:
+          description: Brand of the console
+          type: string
+          example: Sony Computer Entertainment
+        price:
+          description: Price of the console, in euros
+          type: number
+          format: double
+          example: 499.99
+        launchDate:
+          description: Date of the console's launch, ISO-8601 format
+          $ref: '#/components/schemas/_date'
+        resupplyDate:
+          description: Date of console's resupply, ISO-8601 format
+          $ref: '#/components/schemas/_date'
 
     question:
+      type: object
+      properties:
+        user:
+          description: Author of the question
+          $ref: '#/components/schemas/user'
+        subject:
+          description: Subject of the question
+          type: string
+          example: Question about the payment methods
+        questionBody:
+          description: Body of the question
+          type: string
+          example: Can I purchase using cryptocurrencies?
+        state:
+          description: State of the question
+          enum:
+            - answered
+            - pending
+        isAnswered:
+          description: Boolean describing the state of the question
+          type: boolean
+          example: false
+        answeredBy:
+          description: Employee who answered the question
+          $ref: '#/components/schemas/employee'
+        answer:
+          description: Body of the answer
+          type: string
+          example: Sorry, but cryptocurrencies are not allowed in our web store
 
     order:
+      type: object
+      properties:
+        user:
+          description: Owner of the order
+          $ref: '#/components/schemas/user'
+        state:
+          description: State of the order
+          enum:
+            - purchased
+            - pending
+            - shipped
+            - delivered
+            - returned
+        orderProducts:
+          description: Products included in the order
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/console'
+              - $ref: '#/components/schemas/game'
+        orderDate:
+          description: Date of the order
+          $ref: '#/components/schemas/_date'
+        deliveryDate:
+          description: Delivery date of the order
+          $ref: '#/components/schemas/_date'
 
     return:
+      type: object
+      properties:
+        user:
+          description: Claimer of the return
+          $ref: '#/components/schemas/user'
+        state:
+          description: State of the request
+          enum:
+            - requested
+            - made
+        returnedProducts:
+          description: Products included in the request
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/console'
+              - $ref: '#/components/schemas/game'
+        reason:
+          description: Reason for the return
+          type: string
+          example: The console I acquire does not work
+        returnDate:
+          description: Date when the return was made
+          $ref: '#/components/schemas/_date'
+        dateRequest:
+          description: Date when the return was requested
+          $ref: '#/components/schemas/_date'
+
+    standard_response_result:
+      description: Result model for all responses
+      type: object
+      properties:
+        http_status:
+          description: HTTP status of the current response
+          type: string
+          example: BAD_REQUEST
+        code:
+          description: HTTP status code of the current response
+          type: integer
+          example: 400
+        description:
+          description: Possible description for the current response, usually only for errors
+          type: string
+          example: An internal error occurred
+      required:
+        - http_status
+        - code
+
+    standard_error_response:
+      description: Error response model
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/standard_response_result'
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                description: Name of the item causing the error
+                type: string
+                example: User's name
+              value:
+                description: Short description for the error
+                type: string
+                example: You must declare a name while creating a new user
+      required:
+        - result
 
   responses:
+
+    standard_bad_request_response:
+      description: Bad request response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error_response'
+
+    standard_unauthorized_response:
+      description: Unauthorized response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error_response'
+
+    standard_forbidden_response:
+      description: Forbidden response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error_response'
+
+    standard_not_found_response:
+      description: Not found response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error_response'
+
+    standard_internal_error_response:
+      description: Internal server error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error_response'
 
   requestBodies:
 
