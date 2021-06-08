@@ -220,13 +220,13 @@ components:
       properties:
         name:
           type: string
-          example: Jacob
+          example: Jhon
         family_name_1:
           type: string
-          example: Carretero
+          example: Doe
         family_name_2:
           type: string
-          example: Poblete
+          example: Doe
         email:
           $ref: '#/components/schemas/_email'
         password:
@@ -243,10 +243,6 @@ components:
           example: Y21J7mo4
         password:
           $ref: '#/components/schemas/_password'
-        isActive:
-          description: Boolean describing the active state of the employee
-          type: boolean
-          example: true
 
     game:
       type: object
@@ -289,7 +285,7 @@ components:
         launchDate:
           description: Date of the game's launch, ISO-8601 format
           $ref: '#/components/schemas/_date'
-        resupplyDate:
+        resupplyDate: # Yo esto lo quitaría
           description: Date of game's resupply, ISO-8601 format
           $ref: '#/components/schemas/_date'
 
@@ -448,35 +444,35 @@ components:
 
   responses:
 
-    standard_bad_request_response:
+    standard_bad_request:
       description: Bad request response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
 
-    standard_unauthorized_response:
+    standard_unauthorized:
       description: Unauthorized response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
 
-    standard_forbidden_response:
+    standard_forbidden:
       description: Forbidden response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
 
-    standard_not_found_response:
+    standard_not_found:
       description: Not found response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
 
-    standard_internal_error_response:
+    standard_internal_error:
       description: Internal server error response
       content:
         application/json:
@@ -484,6 +480,207 @@ components:
             $ref: '#/components/schemas/standard_error_response'
 
   requestBodies:
+    post_password_reset:
+      description: Request body for password reset, containing the email associated to the user's account
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email: 
+                $ref: '#/components/schemas/_email'
+            required:
+              - email
+
+    post_user:
+      description: Request body with user properties
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/user'
+            required:
+              - name
+              - family_name_1
+              - email
+              - password
+
+    patch_user:
+      description: Request body with user properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              isDeleted:
+                description: Boolean describing if the user is deleted
+                type: boolean
+                example: false
+                default: false
+            required:
+              - isDeleted
+
+    patch_user_me:
+      description: Request body with user properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/user'
+            properties:
+              isDeleted:
+                type: boolean
+                example: false
+                default: false
+
+    post_employee:
+      description: Request body with employee properties
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/employee'
+            required:
+              - login
+              - password
+
+    patch_employee:
+      description: Request body with employee properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/employee'
+            properties:
+              isActive:
+                description: Boolean describing the active state of the employee
+                type: boolean
+                example: true
+                default: true
+
+    post_game:
+      description: Request body with game properties
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/game'
+            required:
+              - name
+              - developer
+              - category
+              - PEGI
+              - explicitContent
+              - numberOfPlayers
+              - synopsis
+              - price
+              - launchDate
+
+    patch_game:
+      description: Request body with game properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/game'
+
+    post_console:
+      description: Request body with console properties
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/console'
+            required:
+              - name
+              - brand
+              - price
+              - launchDate
+
+    patch_console:
+      description: Request body with console properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/console'
+
+    post_question:
+      description: Request body with question properties
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                description: Author of the question
+                $ref: '#/components/schemas/user'
+              subject:
+                description: Subject of the question
+                type: string
+                example: Question about the payment methods
+              questionBody:
+                description: Body of the question
+                type: string
+                example: Can I purchase using cryptocurrencies?
+            required:
+              - users
+              - subject
+              - questionBody
+
+    patch_question:
+      description: Request body with question properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/question'
+
+    post_order:
+      description: Request body with order properties
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+              
+
+    patch_order:
+      description: Request body with order properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            type:
+
+    post_return:
+      description: Request body with return properties
+      required: true
+      content:
+        application/json:
+          schema:
+            type:
+
+    patch_return:
+      description: Request body with return properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            type:
+
 
   parameters:
     uuidParam:
