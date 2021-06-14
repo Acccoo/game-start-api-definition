@@ -39,6 +39,8 @@ paths:
         - Consoles
 
   /consoles/{consoleId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Consoles
@@ -61,6 +63,8 @@ paths:
         - Employees
 
   /employees/{employeeId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Employees
@@ -79,6 +83,8 @@ paths:
         - Games
 
   /games/{gameId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Games
@@ -101,6 +107,8 @@ paths:
         - Orders
 
   /orders/{orderId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Orders
@@ -119,6 +127,8 @@ paths:
         - Questions
 
   /questions/{questionId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Questions
@@ -137,6 +147,8 @@ paths:
         - Returns
 
   /returns/{returnId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Returns
@@ -151,6 +163,8 @@ paths:
         - Users
 
   /users/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
     patch:
       tags:
         - Users
@@ -218,6 +232,8 @@ components:
     user:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         name:
           type: string
           example: Jhon
@@ -235,6 +251,8 @@ components:
     employee:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         login:
           description: Exclusive login for an employee, given by the administrator
           type: string
@@ -247,6 +265,8 @@ components:
     game:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         name:
           description: Name of the game
           type: string
@@ -292,6 +312,8 @@ components:
     console:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         name:
           description: Name of the console
           type: string
@@ -315,6 +337,8 @@ components:
     question:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         user:
           description: Author of the question
           $ref: '#/components/schemas/user'
@@ -346,6 +370,8 @@ components:
     order:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         user:
           description: Owner of the order
           $ref: '#/components/schemas/user'
@@ -374,6 +400,8 @@ components:
     return:
       type: object
       properties:
+        uuid:
+          $ref: '#/components/schemas/_uuid'
         user:
           description: Claimer of the return
           $ref: '#/components/schemas/user'
@@ -441,6 +469,69 @@ components:
                 example: You must declare a name while creating a new user
       required:
         - result
+
+    standard_paging:
+      description: Required when response is paginated. This object only contains paginations information
+      type: object
+      properties:
+        init:
+          description: Page offset
+          type: integer
+          example: 2
+        limit:
+          description: Page size
+          type: integer
+          example: 20
+        num_pages:
+          description: Total number of pages
+          type: integer
+          example: 6
+        total:
+          description: Total number of records
+          type: integer
+          example: 10
+        start:
+          description: First registry in the result list
+          type: integer
+          example: 1
+        end:
+          description: Last registry in the result list
+          type: integer
+          example: 256
+        _links:
+          type: object
+          properties:
+            _self: 
+              description: Current page link
+              $ref: '#/components/schemas/standard_link'
+            _previous: 
+              description: Link to previous page
+              $ref: '#/components/schemas/standard_link'
+            _next: 
+              description: Link to next page
+              $ref: '#/components/schemas/standard_link'
+            _first: 
+              description: Link to first page
+              $ref: '#/components/schemas/standard_link'
+            _last: 
+              description: Link to last page
+              $ref: '#/components/schemas/standard_link'
+          required:
+            - previous
+            - next
+      required:
+        - offset
+        - limit
+        - total
+        - _links
+
+    standard_link:
+      description: URL link to page
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://api.server.com/api/v1/resources)$offset=1&$limit=25
 
   responses:
 
@@ -654,8 +745,21 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              
+            type: object
+            properties:
+              user:
+                description: Owner of the order
+                $ref: '#/components/schemas/user'
+              orderProducts:
+                description: Products included in the order
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/console'
+                    - $ref: '#/components/schemas/game'
+            required:
+              - user
+              - orderProducts
 
     patch_order:
       description: Request body with order properties to modify
@@ -663,7 +767,8 @@ components:
       content:
         application/json:
           schema:
-            type:
+            allOf:
+              - $ref: '#/components/schemas/order'
 
     post_return:
       description: Request body with return properties
@@ -671,7 +776,22 @@ components:
       content:
         application/json:
           schema:
-            type:
+            type: object
+            properties:
+              user:
+                description: Claimer of the return
+                $ref: '#/components/schemas/user'
+              returnedProducts:
+                description: Products included in the request
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/console'
+                    - $ref: '#/components/schemas/game'
+              reason:
+                description: Reason for the return
+                type: string
+                example: The console I acquire does not work
 
     patch_return:
       description: Request body with return properties to modify
@@ -679,8 +799,13 @@ components:
       content:
         application/json:
           schema:
-            type:
-
+            type: object
+            properties:
+              state:
+                description: State of the request
+                enum:
+                  - requested
+                  - made
 
   parameters:
     uuidParam:
