@@ -97,45 +97,25 @@ paths:
       tags:
         - Games
 
-  /orders:
+  /sales:
     get:
       tags:
-        - Orders
+        - Sales
 
     post:
       tags:
-        - Orders
+        - Sales
 
-  /orders/{orderId}:
+  /sales/{saleId}:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
-        - Orders
+        - Sales
 
     patch:
       tags:
-        - Orders
-
-  /questions:
-    get:
-      tags:
-        - Questions
-
-    post:
-      tags:
-        - Questions
-
-  /questions/{questionId}:
-    parameters:
-      - $ref: '#/components/parameters/uuidParam'
-    get:
-      tags:
-        - Questions
-
-    patch:
-      tags:
-        - Questions
+        - Sales
 
   /returns:
     get:
@@ -242,6 +222,7 @@ components:
           example: Doe
         family_name_2:
           type: string
+          # faltan maxLength y minLength
           example: Doe
         email:
           $ref: '#/components/schemas/_email'
@@ -278,6 +259,7 @@ components:
         category:
           description: Category of the game
           type: string
+          # faltan maxLength y minLength
           example: FPS
         PEGI:
           description: Pan European Game Information
@@ -288,6 +270,7 @@ components:
           type: array
           items:
             type: string
+            # faltan maxLength y minLength
             example: violence
         numberOfPlayers:
           description: How many players can play at the same time
@@ -295,6 +278,7 @@ components:
           example: '2'
         synopsis:
           description: Short description of the game
+          # faltan maxLength y minLength
           type: string
           example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
         price:
@@ -326,6 +310,7 @@ components:
           description: Price of the console, in euros
           type: number
           format: double
+          minimum: 0
           example: 499.99
         launchDate:
           description: Date of the console's launch, ISO-8601 format
