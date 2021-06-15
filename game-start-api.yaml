@@ -263,9 +263,9 @@ components:
       properties:
         uuid:
           $ref: '#/components/schemas/_uuid'
-        user:
+        employee:
           description: Owner of the order
-          $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/employee'
         state:
           description: State of the order
           enum:
@@ -274,14 +274,14 @@ components:
             - shipped
             - delivered
             - returned
-        orderProducts:
+        saleProducts:
           description: Products included in the order
           type: array
           items:
             oneOf:
               - $ref: '#/components/schemas/console'
               - $ref: '#/components/schemas/game'
-        orderDate:
+        saleDate:
           description: Date of the order
           $ref: '#/components/schemas/_date'
         deliveryDate:
@@ -293,9 +293,9 @@ components:
       properties:
         uuid:
           $ref: '#/components/schemas/_uuid'
-        user:
-          description: Claimer of the return
-          $ref: '#/components/schemas/user'
+        employee:
+          description: Manager of the return
+          $ref: '#/components/schemas/employee'
         state:
           description: State of the request
           enum:
@@ -541,7 +541,7 @@ components:
             allOf:
               - $ref: '#/components/schemas/console'
 
-    post_order:
+    post_sale:
       description: Request body with order properties
       required: true
       content:
@@ -563,14 +563,14 @@ components:
               - user
               - orderProducts
 
-    patch_order:
+    patch_sale:
       description: Request body with order properties to modify
       required: true
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/order'
+              - $ref: '#/components/schemas/sale'
 
     post_return:
       description: Request body with return properties
