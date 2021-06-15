@@ -49,10 +49,6 @@ paths:
       tags:
         - Consoles
 
-    delete:
-      tags:
-        - Consoles
-
   /employees:
     get:
       tags:
@@ -90,10 +86,6 @@ paths:
         - Games
 
     patch:
-      tags:
-        - Games
-
-    delete:
       tags:
         - Games
 
@@ -137,51 +129,6 @@ paths:
       tags:
         - Returns
 
-  /users:
-    post:
-      tags:
-        - Users
-
-  /users/{userId}:
-    parameters:
-      - $ref: '#/components/parameters/uuidParam'
-    patch:
-      tags:
-        - Users
-
-    delete:
-      tags:
-        - Users
-
-  /users/me:
-    get:
-      tags:
-        - Users
-
-    patch:
-      tags:
-        - Users
-
-  /users/me/orders:
-    get:
-      tags:
-        - Orders
-
-  /users/me/questions:
-    get:
-      tags:
-        - Questions
-
-  /users/me/returns:
-    get:
-      tags:
-        - Returns
-
-  /users/password-reset:
-    post:
-      tags:
-        - Users
-
 components:
   schemas:
     _uuid:
@@ -208,26 +155,6 @@ components:
       # faltan maxLength y minLength
       format: password
       example: thisisapassword
-
-    user:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        name:
-          type: string
-          example: Jhon
-        family_name_1:
-          type: string
-          example: Doe
-        family_name_2:
-          type: string
-          # faltan maxLength y minLength
-          example: Doe
-        email:
-          $ref: '#/components/schemas/_email'
-        password:
-          $ref: '#/components/schemas/_password'
 
     employee:
       type: object
@@ -286,6 +213,12 @@ components:
           type: number
           format: double
           example: 9.99
+        state:
+          description: State of the game
+          enum:
+            - descatalogado
+            - disponible 
+            - agotado
         launchDate:
           description: Date of the game's launch, ISO-8601 format
           $ref: '#/components/schemas/_date'
@@ -312,6 +245,12 @@ components:
           format: double
           minimum: 0
           example: 499.99
+        state:
+          description: State of the game
+          enum:
+            - descatalogado
+            - disponible 
+            - agotado
         launchDate:
           description: Date of the console's launch, ISO-8601 format
           $ref: '#/components/schemas/_date'
@@ -319,40 +258,7 @@ components:
           description: Date of console's resupply, ISO-8601 format
           $ref: '#/components/schemas/_date'
 
-    question:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        user:
-          description: Author of the question
-          $ref: '#/components/schemas/user'
-        subject:
-          description: Subject of the question
-          type: string
-          example: Question about the payment methods
-        questionBody:
-          description: Body of the question
-          type: string
-          example: Can I purchase using cryptocurrencies?
-        state:
-          description: State of the question
-          enum:
-            - answered
-            - pending
-        isAnswered:
-          description: Boolean describing the state of the question
-          type: boolean
-          example: false
-        answeredBy:
-          description: Employee who answered the question
-          $ref: '#/components/schemas/employee'
-        answer:
-          description: Body of the answer
-          type: string
-          example: Sorry, but cryptocurrencies are not allowed in our web store
-
-    order:
+    sale:
       type: object
       properties:
         uuid:
@@ -556,62 +462,6 @@ components:
             $ref: '#/components/schemas/standard_error_response'
 
   requestBodies:
-    post_password_reset:
-      description: Request body for password reset, containing the email associated to the user's account
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              email: 
-                $ref: '#/components/schemas/_email'
-            required:
-              - email
-
-    post_user:
-      description: Request body with user properties
-      required: true
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/user'
-            required:
-              - name
-              - family_name_1
-              - email
-              - password
-
-    patch_user:
-      description: Request body with user properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              isDeleted:
-                description: Boolean describing if the user is deleted
-                type: boolean
-                example: false
-                default: false
-            required:
-              - isDeleted
-
-    patch_user_me:
-      description: Request body with user properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/user'
-            properties:
-              isDeleted:
-                type: boolean
-                example: false
-                default: false
 
     post_employee:
       description: Request body with employee properties
@@ -690,39 +540,6 @@ components:
           schema:
             allOf:
               - $ref: '#/components/schemas/console'
-
-    post_question:
-      description: Request body with question properties
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              user:
-                description: Author of the question
-                $ref: '#/components/schemas/user'
-              subject:
-                description: Subject of the question
-                type: string
-                example: Question about the payment methods
-              questionBody:
-                description: Body of the question
-                type: string
-                example: Can I purchase using cryptocurrencies?
-            required:
-              - users
-              - subject
-              - questionBody
-
-    patch_question:
-      description: Request body with question properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/question'
 
     post_order:
       description: Request body with order properties
