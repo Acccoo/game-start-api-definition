@@ -1,5 +1,4 @@
 openapi: '3.0.2'
-
 info:
   title: Game Start API
   version: v1
@@ -11,10 +10,8 @@ info:
   contact:
     name: Jacob de las Peñas | Marcos Carretero Poblete
     email: jacob@cloudappi.net
-
 servers:
   - url: https://api.server.com
-
 # security:
 #   - wso2_ldap:
 #     description: User authorization using LDAP
@@ -27,108 +24,441 @@ servers:
 #     flow: accessCode
 #     authorizationUrl: https://example.com/oauth/authorize
 #     tokenUrl: https://example.com/oauth/token
-
 paths:
   /consoles:
     get:
       tags:
         - Consoles
-
+      description: Retrieves a list of consoles
+      operationId: getConsoles
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - $ref: '#/components/parameters/excludeParam'
+        - $ref: '#/components/parameters/expandParam'
+      responses:
+        206:
+          $ref: '#/components/responses/standard_response_console_list'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     post:
       tags:
         - Consoles
-
+      description: Creates a new console
+      operationId: createConsole
+      requestBody:
+        $ref: '#/components/requestBodies/post_console'
+      responses:
+        201:
+          $ref: '#/components/responses/standard_response_created'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429: 
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /consoles/{consoleId}:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Consoles
-
+      description: Retrieves the console with the given identifier
+      operationId: getConsoleById
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_console'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     patch:
       tags:
         - Consoles
-
+      description: Updates the console with the given identifier
+      operationId: updateConsole
+      requestBody:
+        $ref: '#/components/requestBodies/patch_console'
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_no_content'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /employees:
     get:
       tags:
         - Employees
-
+      description: Retrieves a list of employees
+      operationId: getEmployees
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - $ref: '#/components/parameters/excludeParam'
+        - $ref: '#/components/parameters/expandParam'
+      responses:
+        206:
+          $ref: '#/components/responses/standard_response_employee_list'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     post:
       tags:
         - Employees
-
+      description: Creates a new employee
+      operationId: createEmployee
+      requestBody:
+        $ref: '#/components/requestBodies/post_employee'
+      responses:
+        201:
+          $ref: '#/components/responses/standard_response_created'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /employees/{employeeId}:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Employees
-
+      description: Retrieves the employee with the given identifier
+      operationId: getEmployeeById
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_employee'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     patch:
       tags:
         - Employees
-
+      description: Updates the employee with the given identifier
+      operationId: updateEmployee
+      requestBody:
+        $ref: '#/components/requestBodies/patch_employee'
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_no_content'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /games:
     get:
       tags:
         - Games
-
+      description: Retrieves a list of games
+      operationId: getGames
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - $ref: '#/components/parameters/excludeParam'
+        - $ref: '#/components/parameters/expandParam'
+      responses:
+        206:
+          $ref: '#/components/responses/standard_response_game_list'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     post:
       tags:
         - Games
-
+      description: Creates a new game
+      operationId: createGame
+      requestBody:
+        $ref: '#/components/requestBodies/post_game'
+      responses:
+        201:
+          $ref: '#/components/responses/standard_response_created'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /games/{gameId}:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Games
-
+      description: Retrieves the game with the given identifier
+      operationId: getGameById
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_game'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     patch:
       tags:
         - Games
-
+      description: Updates the game with the given identifier
+      operationId: updateGame
+      requestBody:
+        $ref: '#/components/requestBodies/patch_game'
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_no_content'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /sales:
     get:
       tags:
         - Sales
-
+      description: Retrieves a list of sales
+      operationId: getSales
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - $ref: '#/components/parameters/excludeParam'
+        - $ref: '#/components/parameters/expandParam'
+      responses:
+        206:
+          $ref: '#/components/responses/standard_response_sale_list'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     post:
       tags:
         - Sales
-
+      description: Creates a new sale
+      operationId: createSale
+      requestBody:
+        $ref: '#/components/requestBodies/post_sale'
+      responses:
+        201:
+          $ref: '#/components/responses/standard_response_created'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /sales/{saleId}:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Sales
-
+      description: Retrieves the sale with the given identifier
+      operationId: getSaleById
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_sale'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     patch:
       tags:
         - Sales
-
+      description: Updates the sale with the given identifier
+      operationId: updateSale
+      requestBody:
+        $ref: '#/components/requestBodies/patch_sale'
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_no_content'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /returns:
     get:
       tags:
         - Returns
-
+      description: Retrieves a list of returns
+      operationId: getReturns
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - $ref: '#/components/parameters/excludeParam'
+        - $ref: '#/components/parameters/expandParam'
+      responses:
+        206:
+          $ref: '#/components/responses/standard_response_return_list'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     post:
       tags:
         - Returns
-
+      description: Creates a new return
+      operationId: createReturn
+      requestBody:
+        $ref: '#/components/requestBodies/post_return'
+      responses:
+        201:
+          $ref: '#/components/responses/standard_response_created'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
   /returns/{returnId}:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
     get:
       tags:
         - Returns
-
+      description: Retrieves the return with the given identifier
+      operationId: getReturnById
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_return'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
     patch:
       tags:
         - Returns
-
+      description: Updates the return with the given identifier
+      operationId: updateReturn
+      requestBody:
+        $ref: '#/components/requestBodies/patch_return'
+      responses:
+        200:
+          $ref: '#/components/responses/standard_response_no_content'
+        400:
+          $ref: '#/components/responses/standard_response_bad_request'
+        401:
+          $ref: '#/components/responses/standard_response_unauthorized'
+        403:
+          $ref: '#/components/responses/standard_response_forbidden'
+        404:
+          $ref: '#/components/responses/standard_response_not_found'
+        429:
+          $ref: '#/components/responses/standard_response_too_many_requests'
+        default:
+          $ref: '#/components/responses/standard_response_internal_error'
 components:
   schemas:
     _uuid:
@@ -138,38 +468,31 @@ components:
       maxLength: 36
       pattern: '^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}$'
       example: 1b90aa6b-4720-48d2-ac1d-4229668233e5
-    
     _date:
       type: string
       format: date-time
       example: '2021-07-01T12:05:20+00:00'
-
     _email:
       type: string
       # faltan maxLength y minLength
       format: email
       example: jacob@cloudappi.net
-    
     _password:
       type: string
       # faltan maxLength y minLength
       format: password
       example: thisisapassword
-
     employee:
       type: object
       properties:
         uuid:
           $ref: '#/components/schemas/_uuid'
         login:
-          description: Exclusive login for an employee, given by the administrator
-          type: string
-          maxLength: 8
-          minLength: 8
-          example: Y21J7mo4
+          $ref: '#/components/schemas/login'
         password:
           $ref: '#/components/schemas/_password'
-
+        isActive:
+          $ref: '#/components/schemas/isActive'
     game:
       type: object
       properties:
@@ -209,10 +532,7 @@ components:
           type: string
           example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
         price:
-          description: Price of the game, in euros
-          type: number
-          format: double
-          example: 9.99
+          $ref: '#/components/schemas/price'
         state:
           description: State of the game
           enum:
@@ -222,10 +542,9 @@ components:
         launchDate:
           description: Date of the game's launch, ISO-8601 format
           $ref: '#/components/schemas/_date'
-        resupplyDate: # Yo esto lo quitaría
+        resupplyDate:
           description: Date of game's resupply, ISO-8601 format
           $ref: '#/components/schemas/_date'
-
     console:
       type: object
       properties:
@@ -240,11 +559,7 @@ components:
           type: string
           example: Sony Computer Entertainment
         price:
-          description: Price of the console, in euros
-          type: number
-          format: double
-          minimum: 0
-          example: 499.99
+          $ref: '#/components/schemas/price'
         state:
           description: State of the game
           enum:
@@ -257,7 +572,23 @@ components:
         resupplyDate:
           description: Date of console's resupply, ISO-8601 format
           $ref: '#/components/schemas/_date'
-
+    login:
+      description: Exclusive alphanumeric login for an employee, given by the administrator
+      type: string
+      maxLength: 8
+      minLength: 8
+      example: Y21J7mo4
+    isActive:
+      description: Boolean describing the active state of the employee
+      type: boolean
+      example: true
+      default: true
+    price:
+      description: Price in euros
+      type: number
+      format: double
+      minimum: 0
+      example: 499.99
     sale:
       type: object
       properties:
@@ -287,7 +618,6 @@ components:
         deliveryDate:
           description: Delivery date of the order
           $ref: '#/components/schemas/_date'
-
     return:
       type: object
       properties:
@@ -318,33 +648,36 @@ components:
         dateRequest:
           description: Date when the return was requested
           $ref: '#/components/schemas/_date'
-
-    standard_response_result:
-      description: Result model for all responses
+    standard_response_status:
+      description: Status model for all responses
       type: object
       properties:
-        http_status:
-          description: HTTP status of the current response
-          type: string
-          example: BAD_REQUEST
-        code:
-          description: HTTP status code of the current response
-          type: integer
-          example: 400
-        description:
-          description: Possible description for the current response, usually only for errors
-          type: string
-          example: An internal error occurred
+        status:
+          type: object
+          properties:
+            http_status:
+              description: HTTP status of the current response
+              type: string
+              example: BAD_REQUEST
+            code:
+              description: HTTP status code of the current response
+              type: integer
+              example: 400
+            description:
+              description: Possible description for the current response, usually only for errors
+              type: string
+              example: An internal error occurred
+          required:
+            - http_status
+            - code
       required:
-        - http_status
-        - code
-
+        - status
     standard_error_response:
       description: Error response model
       type: object
       properties:
-        result:
-          $ref: '#/components/schemas/standard_response_result'
+        status:
+          $ref: '#/components/schemas/standard_response_status'
         errors:
           type: array
           items:
@@ -359,9 +692,9 @@ components:
                 type: string
                 example: You must declare a name while creating a new user
       required:
-        - result
-
-    standard_paging:
+        - status
+        - errors
+    standard_response_paging:
       description: Required when response is paginated. This object only contains paginations information
       type: object
       properties:
@@ -415,7 +748,17 @@ components:
         - limit
         - total
         - _links
-
+    standard_response_list:
+      description: Minimun properties of a response when we retrieve a list of resources
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/standard_response_status'
+        paging:
+          $ref: '#/components/schemas/standard_response_paging'
+      required:
+        - status
+        - paging
     standard_link:
       description: URL link to page
       type: object
@@ -423,81 +766,242 @@ components:
         href:
           type: string
           example: https://api.server.com/api/v1/resources)$offset=1&$limit=25
-
   responses:
-
-    standard_bad_request:
+    standard_response_console_list:
+      description: Partial Content
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_list'
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/console'
+    standard_response_console:
+      description: OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_status'
+            properties:
+              data:
+                $ref: '#/components/schemas/console'
+    standard_response_return_list:
+      description: Partial Content
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_list'
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/return'
+    standard_response_return:
+      description: OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_status'
+            properties:
+              data:
+                $ref: '#/components/schemas/return'
+    standard_response_sale_list:
+      description: Partial Content
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_list'
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/sale'
+    standard_response_sale:
+      description: OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_status'
+            properties:
+              data:
+                $ref: '#/components/schemas/sale'
+    standard_response_game_list:
+      description: Partial Content
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_list'
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/game'
+    standard_response_game:
+      description: OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_status'
+            properties:
+              data:
+                $ref: '#/components/schemas/game'
+    standard_response_employee_list:
+      description: Partial Content
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_list'
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/employee'
+    standard_response_employee:
+      description: OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_status'
+            properties:
+              data:
+                $ref: '#/components/schemas/employee'
+    standard_response_no_content:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response_status'
+    standard_response_bad_request:
       description: Bad request response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
-
-    standard_unauthorized:
+    standard_response_unauthorized:
       description: Unauthorized response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
-
-    standard_forbidden:
+    standard_response_forbidden:
       description: Forbidden response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
-
-    standard_not_found:
+    standard_response_not_found:
       description: Not found response
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/standard_error_response'
-
-    standard_internal_error:
+    standard_response_internal_error:
       description: Internal server error response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/standard_error_response'
-
+            $ref: '#/components/schemas/standard_response_status'
+    standard_response_too_many_requests:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response_status' #'#/components/schemas/standard_error_response'
+    standard_response_created:
+      description: Resource created
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response_status'
   requestBodies:
-
     post_employee:
       description: Request body with employee properties
       required: true
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/employee'
+            type: object
+            properties:
+              login:
+                $ref: '#/components/schemas/login'
+              password:
+                $ref: '#/components/schemas/_password'
             required:
               - login
               - password
-
     patch_employee:
       description: Request body with employee properties to modify
       required: true
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/employee'
+            type: object
             properties:
+              password:
+                $ref: '#/components/schemas/_password'
               isActive:
-                description: Boolean describing the active state of the employee
-                type: boolean
-                example: true
-                default: true
-
+                $ref: '#/components/schemas/isActive'
     post_game:
       description: Request body with game properties
       required: true
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/game'
+            type: object
+            properties:
+              name:
+                description: Name of the game
+                type: string
+                example: Candy Crush
+              developer:
+                description: Developer company of the game
+                type: string
+                example: Frictional Games
+              category:
+                description: Category of the game
+                type: string
+                # faltan maxLength y minLength
+                example: FPS
+              PEGI:
+                description: Pan European Game Information
+                type: string
+                example: '+18'
+              explicitContent: 
+                description: Array of advisories for explicit content
+                type: array
+                items:
+                  type: string
+                  # faltan maxLength y minLength
+                  example: violence
+              numberOfPlayers:
+                description: How many players can play at the same time
+                type: string
+                example: '2'
+              synopsis:
+                description: Short description of the game
+                # faltan maxLength y minLength
+                type: string
+                example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
+              price:
+                $ref: '#/components/schemas/price'
+              launchDate:
+                description: Date of the game's launch, ISO-8601 format
+                $ref: '#/components/schemas/_date'
+              resupplyDate:
+                description: Date of game's resupply, ISO-8601 format
+                $ref: '#/components/schemas/_date'
             required:
               - name
               - developer
@@ -508,70 +1012,181 @@ components:
               - synopsis
               - price
               - launchDate
-
     patch_game:
       description: Request body with game properties to modify
       required: true
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/game'
-
+            type: object
+            properties:
+              name:
+                description: Name of the game
+                type: string
+                example: Candy Crush
+              developer:
+                description: Developer company of the game
+                type: string
+                example: Frictional Games
+              category:
+                description: Category of the game
+                type: string
+                # faltan maxLength y minLength
+                example: FPS
+              PEGI:
+                description: Pan European Game Information
+                type: string
+                example: '+18'
+              explicitContent: 
+                description: Array of advisories for explicit content
+                type: array
+                items:
+                  type: string
+                  # faltan maxLength y minLength
+                  example: violence
+              numberOfPlayers:
+                description: How many players can play at the same time
+                type: string
+                example: '2'
+              synopsis:
+                description: Short description of the game
+                # faltan maxLength y minLength
+                type: string
+                example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
+              price:
+                $ref: '#/components/schemas/price'
+              state:
+                description: State of the game
+                enum:
+                  - descatalogado
+                  - disponible 
+                  - agotado
+              launchDate:
+                description: Date of the game's launch, ISO-8601 format
+                $ref: '#/components/schemas/_date'
+              resupplyDate:
+                description: Date of game's resupply, ISO-8601 format
+                $ref: '#/components/schemas/_date'
     post_console:
       description: Request body with console properties
       required: true
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/console'
+            type: object
+            properties:
+              name:
+                description: Name of the console
+                type: string
+                example: Playstation 4
+              brand:
+                description: Brand of the console
+                type: string
+                example: Sony Computer Entertainment
+              price:
+                $ref: '#/components/schemas/price'
+              launchDate:
+                description: Date of the console's launch, ISO-8601 format
+                $ref: '#/components/schemas/_date'
+              resupplyDate:
+                description: Date of console's resupply, ISO-8601 format
+                $ref: '#/components/schemas/_date'
             required:
               - name
               - brand
               - price
               - launchDate
-
     patch_console:
       description: Request body with console properties to modify
       required: true
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/console'
-
+            type: object
+            properties:
+              name:
+                description: Name of the console
+                type: string
+                example: Playstation 4
+              brand:
+                description: Brand of the console
+                type: string
+                example: Sony Computer Entertainment
+              state:
+                description: State of the game
+                enum:
+                  - descatalogado
+                  - disponible 
+                  - agotado
+              price:
+                $ref: '#/components/schemas/price'
+              launchDate:
+                description: Date of the console's launch, ISO-8601 format
+                $ref: '#/components/schemas/_date'
+              resupplyDate:
+                description: Date of console's resupply, ISO-8601 format
+                $ref: '#/components/schemas/_date'
     post_sale:
-      description: Request body with order properties
+      description: Request body with sale properties
       required: true
       content:
         application/json:
           schema:
             type: object
             properties:
-              user:
-                description: Owner of the order
-                $ref: '#/components/schemas/user'
-              orderProducts:
+              employee:
+                description: Owner of the sale
+                $ref: '#/components/schemas/employee'
+              saleProducts:
+                description: Products included in the sale
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/console'
+                    - $ref: '#/components/schemas/game'
+              state:
+                description: State of the order
+                enum:
+                  - purchased
+                  - pending
+                  - shipped
+                  - delivered
+                  - returned
+              saleDate:
+                description: Date of the order
+                $ref: '#/components/schemas/_date'
+            required:
+              - user
+              - orderProducts
+    patch_sale:
+      description: Request body with sale properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              state:
+                description: State of the order
+                enum:
+                  - purchased
+                  - pending
+                  - shipped
+                  - delivered
+                  - returned
+              saleProducts:
                 description: Products included in the order
                 type: array
                 items:
                   oneOf:
                     - $ref: '#/components/schemas/console'
                     - $ref: '#/components/schemas/game'
-            required:
-              - user
-              - orderProducts
-
-    patch_sale:
-      description: Request body with order properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/sale'
-
+              saleDate:
+                description: Date of the order
+                $ref: '#/components/schemas/_date'
+              deliveryDate:
+                description: Delivery date of the order
+                $ref: '#/components/schemas/_date'
     post_return:
       description: Request body with return properties
       required: true
@@ -580,9 +1195,14 @@ components:
           schema:
             type: object
             properties:
-              user:
+              employee:
                 description: Claimer of the return
-                $ref: '#/components/schemas/user'
+                $ref: '#/components/schemas/employee'
+              state:
+                description: State of the request
+                enum:
+                  - requested
+                  - made
               returnedProducts:
                 description: Products included in the request
                 type: array
@@ -594,7 +1214,10 @@ components:
                 description: Reason for the return
                 type: string
                 example: The console I acquire does not work
-
+            required:
+              - employee
+              - returnedProducts
+              - reason
     patch_return:
       description: Request body with return properties to modify
       required: true
@@ -608,7 +1231,16 @@ components:
                 enum:
                   - requested
                   - made
-
+              returnedProducts:
+                description: Products included in the request
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/console'
+                    - $ref: '#/components/schemas/game'
+              returnDate:
+                description: Date when the return was made
+                $ref: '#/components/schemas/_date'
   parameters:
     uuidParam:
       name: uuid
@@ -617,7 +1249,6 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/_uuid'
-    # Query Params
     excludeParam:
       in: query
       name: $exclude
@@ -626,7 +1257,6 @@ components:
         Array of resource attributes excluded in result.
       schema:
         type: string
-
     selectParam:
       in: query
       name: $select
@@ -635,7 +1265,6 @@ components:
         Array of the resource attributes that are included in result.
       schema:
         type: string
-
     limitParam:
       in: query
       name: $limit
@@ -647,7 +1276,6 @@ components:
         default: 25
         minimum: 0
         maximum: 25
-
     offsetParam:
       in: query
       name: $offset
@@ -658,7 +1286,6 @@ components:
         type: integer
         default: 0
         minimum: 0
-    
     expandParam:
       in: query
       name: $expand
