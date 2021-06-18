@@ -1,4 +1,4 @@
-openapi: '3.0.2'
+openapi: '3.0.0'
 info:
   title: Game Start API
   version: v1
@@ -11,1051 +11,978 @@ info:
     name: Jacob de las Peñas | Marcos Carretero Poblete
     email: jacob@cloudappi.net
 servers:
-  - url: https://api.server.com
-# security:
-#   - wso2_ldap:
-#     description: User authorization using LDAP
-#     type: 'oauth2'
-#     tokenUrl: https://example.com/oauth/token
-#     flow: 'password'
-#   - wso2_365:
-#     description: User authorization using Office 365
-#     type: 'oauth2'
-#     flow: accessCode
-#     authorizationUrl: https://example.com/oauth/authorize
-#     tokenUrl: https://example.com/oauth/token
+  - url: https://localhost:9443
+    description: Local server
+tags:
+  - name: Consoles
+    description: Consoles operations
+  - name: Games
+    description: Games operations
+  - name: Sales
+    description: Sales operations
+  - name: Returns
+    description: Returns operations
 paths:
   /consoles:
     get:
+      summary: List consoles
+      description: |
+        Retrieves a paginated list of consoles.
+        Admits *filters* to make the search more specific.
+      operationId: getConsoles
       tags:
         - Consoles
-      description: Retrieves a list of consoles
-      operationId: getConsoles
       parameters:
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/selectParam'
-        - $ref: '#/components/parameters/excludeParam'
-        - $ref: '#/components/parameters/expandParam'
+        - $ref: '#/components/parameters/init_param'
+        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/select_param'
+        - $ref: '#/components/parameters/exclude_param'
       responses:
         206:
-          $ref: '#/components/responses/standard_response_console_list'
+          $ref: '#/components/responses/console_list_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     post:
+      summary: Create console
+      description: Register a new console with basic data.
+      operationId: createConsole
       tags:
         - Consoles
-      description: Creates a new console
-      operationId: createConsole
       requestBody:
         $ref: '#/components/requestBodies/post_console'
       responses:
         201:
-          $ref: '#/components/responses/standard_response_created'
+          $ref: '#/components/responses/standard_created_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         429: 
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
-  /consoles/{consoleId}:
+          $ref: '#/components/responses/standard_internal_error_response'
+  /consoles/{console_id}:
     parameters:
-      - $ref: '#/components/parameters/uuidParam'
+      - $ref: '#/components/parameters/console_id'
     get:
+      summary: Obtain a console
+      description: Retrieves the console with the given identifier.
+      operationId: getConsoleById
       tags:
         - Consoles
-      description: Retrieves the console with the given identifier
-      operationId: getConsoleById
       responses:
         200:
-          $ref: '#/components/responses/standard_response_console'
+          $ref: '#/components/responses/console_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     patch:
+      summary: Update console
+      description: |
+        Updates the console with the given identifier.
+        Only the following fields are permitted:
+        * name
+        * brand
+        * state
+        * price
+        * launch_date
+        * resupply_date
+      operationId: updateConsole
       tags:
         - Consoles
-      description: Updates the console with the given identifier
-      operationId: updateConsole
       requestBody:
         $ref: '#/components/requestBodies/patch_console'
       responses:
         200:
-          $ref: '#/components/responses/standard_response_no_content'
+          $ref: '#/components/responses/standard_updated_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
-  /employees:
-    get:
+          $ref: '#/components/responses/standard_internal_error_response'
+    delete:
+      summary: Delete a console
+      description: Deletes the console with the given identifier.
+      operationId: deleteConsoleById
       tags:
-        - Employees
-      description: Retrieves a list of employees
-      operationId: getEmployees
-      parameters:
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/selectParam'
-        - $ref: '#/components/parameters/excludeParam'
-        - $ref: '#/components/parameters/expandParam'
-      responses:
-        206:
-          $ref: '#/components/responses/standard_response_employee_list'
-        400:
-          $ref: '#/components/responses/standard_response_bad_request'
-        401:
-          $ref: '#/components/responses/standard_response_unauthorized'
-        403:
-          $ref: '#/components/responses/standard_response_forbidden'
-        429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
-        default:
-          $ref: '#/components/responses/standard_response_internal_error'
-    post:
-      tags:
-        - Employees
-      description: Creates a new employee
-      operationId: createEmployee
-      requestBody:
-        $ref: '#/components/requestBodies/post_employee'
-      responses:
-        201:
-          $ref: '#/components/responses/standard_response_created'
-        400:
-          $ref: '#/components/responses/standard_response_bad_request'
-        401:
-          $ref: '#/components/responses/standard_response_unauthorized'
-        403:
-          $ref: '#/components/responses/standard_response_forbidden'
-        429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
-        default:
-          $ref: '#/components/responses/standard_response_internal_error'
-  /employees/{employeeId}:
-    parameters:
-      - $ref: '#/components/parameters/uuidParam'
-    get:
-      tags:
-        - Employees
-      description: Retrieves the employee with the given identifier
-      operationId: getEmployeeById
+        - Consoles
       responses:
         200:
-          $ref: '#/components/responses/standard_response_employee'
+          $ref: '#/components/responses/standard_deleted_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
-    patch:
-      tags:
-        - Employees
-      description: Updates the employee with the given identifier
-      operationId: updateEmployee
-      requestBody:
-        $ref: '#/components/requestBodies/patch_employee'
-      responses:
-        200:
-          $ref: '#/components/responses/standard_response_no_content'
-        400:
-          $ref: '#/components/responses/standard_response_bad_request'
-        401:
-          $ref: '#/components/responses/standard_response_unauthorized'
-        403:
-          $ref: '#/components/responses/standard_response_forbidden'
-        404:
-          $ref: '#/components/responses/standard_response_not_found'
-        429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
-        default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
   /games:
     get:
+      summary: List games
+      description: |
+        Retrieves a paginated list of games.
+        Admits *filters* to make the search more specific.
+      operationId: getGames
       tags:
         - Games
-      description: Retrieves a list of games
-      operationId: getGames
       parameters:
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/selectParam'
-        - $ref: '#/components/parameters/excludeParam'
-        - $ref: '#/components/parameters/expandParam'
+        - $ref: '#/components/parameters/init_param'
+        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/select_param'
+        - $ref: '#/components/parameters/exclude_param'
       responses:
         206:
-          $ref: '#/components/responses/standard_response_game_list'
+          $ref: '#/components/responses/game_list_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     post:
+      summary: Create game
+      description: Register a new game with basic data.
+      operationId: createGame
       tags:
         - Games
-      description: Creates a new game
-      operationId: createGame
       requestBody:
         $ref: '#/components/requestBodies/post_game'
       responses:
         201:
-          $ref: '#/components/responses/standard_response_created'
+          $ref: '#/components/responses/standard_created_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
-  /games/{gameId}:
+          $ref: '#/components/responses/standard_internal_error_response'
+  /games/{game_id}:
     parameters:
-      - $ref: '#/components/parameters/uuidParam'
+      - $ref: '#/components/parameters/game_id'
     get:
+      summary: Obtain a game
+      description: Retrieves the game with the given identifier.
+      operationId: getGameById
       tags:
         - Games
-      description: Retrieves the game with the given identifier
-      operationId: getGameById
       responses:
         200:
-          $ref: '#/components/responses/standard_response_game'
+          $ref: '#/components/responses/game_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     patch:
+      summary: Update game
+      description: |
+        Updates the game with the given identifier.
+        Only the following fields are permitted:
+        * name
+        * developer
+        * category
+        * PEGI
+        * parental_advisory
+        * number_of_players
+        * synopsis
+        * price
+        * state
+        * launch_date
+        * resupply_date
+      operationId: updateGame
       tags:
         - Games
-      description: Updates the game with the given identifier
-      operationId: updateGame
       requestBody:
         $ref: '#/components/requestBodies/patch_game'
       responses:
         200:
-          $ref: '#/components/responses/standard_response_no_content'
+          $ref: '#/components/responses/standard_updated_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
+    delete:
+      summary: Delete a game
+      description: Deletes the game with the given identifier.
+      operationId: deleteGameById
+      tags:
+        - Games
+      responses:
+        200:
+          $ref: '#/components/responses/standard_deleted_response'
+        400:
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
+        404:
+          $ref: '#/components/responses/standard_not_found_response'
+        429:
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_internal_error_response'
   /sales:
     get:
+      summary: List sales
+      description: |
+        Retrieves a paginated list of sales.
+        Admits *filters* to make the search more specific.
+      operationId: getSales
       tags:
         - Sales
-      description: Retrieves a list of sales
-      operationId: getSales
       parameters:
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/selectParam'
-        - $ref: '#/components/parameters/excludeParam'
-        - $ref: '#/components/parameters/expandParam'
+        - $ref: '#/components/parameters/init_param'
+        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/select_param'
+        - $ref: '#/components/parameters/exclude_param'
       responses:
         206:
-          $ref: '#/components/responses/standard_response_sale_list'
+          $ref: '#/components/responses/sale_list_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     post:
+      summary: Create sale
+      description: Register a new sale with basic data.
+      operationId: createSale
       tags:
         - Sales
-      description: Creates a new sale
-      operationId: createSale
       requestBody:
         $ref: '#/components/requestBodies/post_sale'
       responses:
         201:
-          $ref: '#/components/responses/standard_response_created'
+          $ref: '#/components/responses/standard_created_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
-  /sales/{saleId}:
+          $ref: '#/components/responses/standard_internal_error_response'
+  /sales/{sale_id}:
     parameters:
-      - $ref: '#/components/parameters/uuidParam'
+      - $ref: '#/components/parameters/sale_id'
     get:
+      summary: Obtain a sale
+      description: Retrieves the sale with the given identifier.
+      operationId: getSaleById
       tags:
         - Sales
-      description: Retrieves the sale with the given identifier
-      operationId: getSaleById
       responses:
         200:
-          $ref: '#/components/responses/standard_response_sale'
+          $ref: '#/components/responses/sale_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     patch:
+      summary: Update sale
+      description: |
+        Updates the sale with the given identifier.
+        Only the following fields are permitted:
+        * state
+        * sale_products
+        * delivery_date
+      operationId: updateSale
       tags:
         - Sales
-      description: Updates the sale with the given identifier
-      operationId: updateSale
       requestBody:
         $ref: '#/components/requestBodies/patch_sale'
       responses:
         200:
-          $ref: '#/components/responses/standard_response_no_content'
+          $ref: '#/components/responses/standard_updated_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
+    delete:
+      summary: Delete a sale
+      description: Deletes the sale with the given identifier.
+      operationId: deleteSaleById
+      tags:
+        - Sales
+      responses:
+        200:
+          $ref: '#/components/responses/standard_deleted_response'
+        400:
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
+        404:
+          $ref: '#/components/responses/standard_not_found_response'
+        429:
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_internal_error_response'
   /returns:
     get:
+      summary: List returns
+      description: |
+        Retrieves a paginated list of returns.
+        Admits *filters* to make the search more specific.
+      operationId: getReturns
       tags:
         - Returns
-      description: Retrieves a list of returns
-      operationId: getReturns
       parameters:
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/selectParam'
-        - $ref: '#/components/parameters/excludeParam'
-        - $ref: '#/components/parameters/expandParam'
+        - $ref: '#/components/parameters/init_param'
+        - $ref: '#/components/parameters/limit_param'
+        - $ref: '#/components/parameters/select_param'
+        - $ref: '#/components/parameters/exclude_param'
       responses:
         206:
-          $ref: '#/components/responses/standard_response_return_list'
+          $ref: '#/components/responses/return_list_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     post:
+      summary: Create return
+      description: Register a new return with basic data.
+      operationId: createReturn
       tags:
         - Returns
-      description: Creates a new return
-      operationId: createReturn
       requestBody:
         $ref: '#/components/requestBodies/post_return'
       responses:
         201:
-          $ref: '#/components/responses/standard_response_created'
+          $ref: '#/components/responses/standard_created_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
-  /returns/{returnId}:
+          $ref: '#/components/responses/standard_internal_error_response'
+  /returns/{return_id}:
     parameters:
-      - $ref: '#/components/parameters/uuidParam'
+      - $ref: '#/components/parameters/return_id'
     get:
+      summary: Obtain a return
+      description: Retrieves the return with the given identifier.
+      operationId: getReturnById
       tags:
         - Returns
-      description: Retrieves the return with the given identifier
-      operationId: getReturnById
       responses:
         200:
-          $ref: '#/components/responses/standard_response_return'
+          $ref: '#/components/responses/return_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
     patch:
+      summary: Update return
+      description: |
+        Updates the return with the given identifier.
+        Only the following fields are permitted:
+        * state
+        * returned_products
+        * return_date
+      operationId: updateReturn
       tags:
         - Returns
-      description: Updates the return with the given identifier
-      operationId: updateReturn
       requestBody:
         $ref: '#/components/requestBodies/patch_return'
       responses:
         200:
-          $ref: '#/components/responses/standard_response_no_content'
+          $ref: '#/components/responses/standard_updated_response'
         400:
-          $ref: '#/components/responses/standard_response_bad_request'
+          $ref: '#/components/responses/standard_bad_request_response'
         401:
-          $ref: '#/components/responses/standard_response_unauthorized'
+          $ref: '#/components/responses/standard_unauthorized_response'
         403:
-          $ref: '#/components/responses/standard_response_forbidden'
+          $ref: '#/components/responses/standard_forbidden_response'
         404:
-          $ref: '#/components/responses/standard_response_not_found'
+          $ref: '#/components/responses/standard_not_found_response'
         429:
-          $ref: '#/components/responses/standard_response_too_many_requests'
+          $ref: '#/components/responses/standard_too_many_requests_response'
         default:
-          $ref: '#/components/responses/standard_response_internal_error'
+          $ref: '#/components/responses/standard_internal_error_response'
+    delete:
+      summary: Delete a return
+      description: Deletes the return with the given identifier.
+      operationId: deleteReturnById
+      tags:
+        - Returns
+      responses:
+        200:
+          $ref: '#/components/responses/standard_deleted_response'
+        400:
+          $ref: '#/components/responses/standard_bad_request_response'
+        401:
+          $ref: '#/components/responses/standard_unauthorized_response'
+        403:
+          $ref: '#/components/responses/standard_forbidden_response'
+        404:
+          $ref: '#/components/responses/standard_not_found_response'
+        429:
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_internal_error_response'
 components:
-  schemas:
-    _date:
-      type: string
-      format: date-time
-      example: '2021-07-01T12:05:20+00:00'
-    _email:
-      type: string
-      maxLength: 100
-      format: email
-      example: jacob@cloudappi.net
-    _explicitContent:
-      description: Array of advisories for explicit content
-      type: array
-      items:
+  parameters:
+    init_param:
+      in: query
+      name: $init
+      required: false
+      description: | 
+        Page number (first page is 0).
+      schema:
+        type: integer
+        format: int32
+        default: 0
+        minimum: 0
+    limit_param:
+      in: query
+      name: $limit
+      required: false
+      description: | 
+        Maximum number of registers per page.
+      schema:
+        type: integer
+        format: int32
+        default: 25
+        minimum: 0
+        maximum: 25
+    select_param:
+      in: query
+      name: $select
+      required: false
+      description: | 
+        Array of the resource attributes to include in result.
+      schema:
         type: string
-        maxLength: 30
-        example: violence
-    _isActive:
-      description: Boolean describing the active state of the employee
-      type: boolean
-      example: true
-      default: true
-    _login:
-      description: Exclusive alphanumeric login for an employee, given by the administrator
-      type: string
-      maxLength: 8
-      minLength: 8
-      example: Y21J7mo4
-    _name:
-      type: string
-      maxLength: 50
-      example: Candy Crush
-    _numberOfPlayers:
-      description: How many players can play at the same time
-      type: string
-      maxLength: 2
-      example: '2'
-    _password:
-      type: string
-      maxLength: 50
-      format: password
-      example: thisisapassword
-    _PEGI:
-      description: Pan European Game Information
-      type: string
-      maxLength: 3
-      example: '+18'
-    _price:
-      description: Price in euros
-      type: number
-      format: double
-      minimum: 0
-      example: 499.99
-    _productsArray:
-      type: array
-      items:
-        oneOf:
-          - $ref: '#/components/schemas/console'
-          - $ref: '#/components/schemas/game'
-    _reasonReturn:
-      description: Reason for a return
-      type: string
-      maxLength: 250
-      example: The console I acquire does not work
-    _stateProduct:
-      description: State of the product
-      enum:
-        - descatalogado
-        - disponible 
-        - agotado
-    _stateReturn:
-      description: State of the request
-      enum:
-        - requested
-        - made
-    _stateSale:
-      description: State of the sale
-      enum:
-        - purchased
-        - pending
-        - shipped
-        - delivered
-        - returned
-    _synopsis:
-      description: Short description of the game
-      maxLength: 500
-      type: string
-      example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
-    _uuid:
-      type: string
-      format: uuid
-      minLength: 36
-      maxLength: 36
-      pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-      example: 1b90aa6b-4720-48d2-ac1d-4229668233e5
-    console:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        name:
-          description: Name of the console
-          $ref: '#/components/schemas/_name'
-        brand:
-          description: Brand of the console
-          $ref: '#/components/schemas/_name'
-          example: Sony Computer Entertainment
-        price:
-          $ref: '#/components/schemas/_price'
-        state:
-          $ref: '#/components/schemas/_stateProduct'
-        launchDate:
-          description: Date of the console's launch, ISO-8601 format
-          $ref: '#/components/schemas/_date'
-        resupplyDate:
-          description: Date of console's resupply, ISO-8601 format
-          $ref: '#/components/schemas/_date'
-    employee:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        login:
-          $ref: '#/components/schemas/_login'
-        password:
-          $ref: '#/components/schemas/_password'
-        isActive:
-          $ref: '#/components/schemas/_isActive'
-    game:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        name:
-          description: Name of the game
-          $ref: '#/components/schemas/_name'
-        developer:
-          description: Developer company of the game
-          $ref: '#/components/schemas/_name'
-          example: Frictional Games
-        category:
-          description: Category of the game
-          $ref: '#/components/schemas/_name'
-          example: First Person Shooter
-        PEGI:
-          $ref: '#/components/schemas/_PEGI'
-        explicitContent: 
-          $ref: '#/components/schemas/_explicitContent'
-        numberOfPlayers:
-          $ref: '#/components/schemas/_numberOfPlayers'
-        synopsis:
-          $ref: '#/components/schemas/_synopsis'
-        price:
-          $ref: '#/components/schemas/_price'
-        state:
-          $ref: '#/components/schemas/_stateProduct'
-        launchDate:
-          description: Date of the game's launch, ISO-8601 format
-          $ref: '#/components/schemas/_date'
-        resupplyDate:
-          description: Date of game's resupply, ISO-8601 format
-          $ref: '#/components/schemas/_date'
-    return:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        employee:
-          description: Manager of the return
-          $ref: '#/components/schemas/employee'
-        state:
-          $ref: '#/components/schemas/_stateReturn'
-        returnedProducts:
-          description: Products included in the request
-          $ref: '#/components/schemas/_productsArray'
-        reason:
-          $ref: '#/components/schemas/_reasonReturn'
-        returnDate:
-          description: Date when the return was made
-          $ref: '#/components/schemas/_date'
-        dateRequest:
-          description: Date when the return was requested
-          $ref: '#/components/schemas/_date'
-    sale:
-      type: object
-      properties:
-        uuid:
-          $ref: '#/components/schemas/_uuid'
-        employee:
-          description: Manager of the order
-          $ref: '#/components/schemas/employee'
-        state:
-          $ref: '#/components/schemas/_stateSale'
-        saleProducts:
-          description: Products included in the sale
-          $ref: '#/components/schemas/_productsArray'
-        saleDate:
-          description: Date of the order
-          $ref: '#/components/schemas/_date'
-        deliveryDate:
-          description: Delivery date of the order
-          $ref: '#/components/schemas/_date'
-    standard_error_response:
-      description: Error response model
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/standard_response_status'
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                description: Name of the item causing the error
-                type: string
-                example: User's name
-              value:
-                description: Short description for the error
-                type: string
-                example: You must declare a name while creating a new user
+    exclude_param:
+      in: query
+      name: $exclude
+      required: false
+      description: |
+        Array of resource attributes excluded in result.
+      schema:
+        type: string
+    console_id:
+      name: console_id
+      in: path
+      description: Console unique identifier
+      required: true
+      schema:
+        $ref: '#/components/schemas/_uuid'
+    game_id:
+      name: game_id
+      in: path
+      description: Game unique identifier
+      required: true
+      schema:
+        $ref: '#/components/schemas/_uuid'
+    return_id:
+      name: return_id
+      in: path
+      description: Return unique identifier
+      required: true
+      schema:
+        $ref: '#/components/schemas/_uuid'
+    sale_id:
+      name: sale_id
+      in: path
+      description: Sale unique identifier
+      required: true
+      schema:
+        $ref: '#/components/schemas/_uuid'
+  schemas:
+    # STANDARD RESPONSES AND RESPONSES OBJECTS SCHEMAS
+    standard_response:
+      description: Standard response model
+      allOf:
+        - $ref: '#/components/schemas/standard_status'
       required:
         - status
-        - errors
-    standard_link:
-      description: URL link to page
-      type: object
-      properties:
-        href:
-          type: string
-          example: https://api.server.com/api/v1/resources)$offset=1&$limit=25
-    standard_response_list:
-      description: Minimun properties of a response when we retrieve a list of resources
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/standard_response_status'
-        paging:
-          $ref: '#/components/schemas/standard_response_paging'
-      required:
-        - status
-        - paging
-    standard_response_paging:
-      description: Required when response is paginated. This object only contains paginations information
-      type: object
-      properties:
-        init:
-          description: Page offset
-          type: integer
-          format: int32
-          example: 2
-        limit:
-          description: Page size
-          type: integer
-          format: int32
-          example: 20
-        num_pages:
-          description: Total number of pages
-          type: integer
-          format: int32
-          example: 6
-        total:
-          description: Total number of records
-          type: integer
-          format: int32
-          example: 10
-        start:
-          description: First registry in the result list
-          type: integer
-          format: int32
-          example: 1
-        end:
-          description: Last registry in the result list
-          type: integer
-          format: int32
-          example: 256
-        _links:
-          type: object
-          properties:
-            _self: 
-              description: Current page link
-              $ref: '#/components/schemas/standard_link'
-            _previous: 
-              description: Link to previous page
-              $ref: '#/components/schemas/standard_link'
-            _next: 
-              description: Link to next page
-              $ref: '#/components/schemas/standard_link'
-            _first: 
-              description: Link to first page
-              $ref: '#/components/schemas/standard_link'
-            _last: 
-              description: Link to last page
-              $ref: '#/components/schemas/standard_link'
-          required:
-            - previous
-            - next
-      required:
-        - offset
-        - limit
-        - total
-        - _links
-    standard_response_status:
-      description: Status model for all responses
+    standard_status:
+      description: Status model for standard response
       type: object
       properties:
         status:
           type: object
           properties:
             http_status:
-              description: HTTP status of the current response
+              description: HTTP request status
               type: string
-              example: BAD_REQUEST
-            code:
-              description: HTTP status code of the current response
+              example: Bad request
+            http_code:
+              description: HTTP status code
               type: integer
               format: int32
               example: 400
             description:
-              description: Possible description for the current response, usually only for errors
+              description: Response short description
               type: string
               example: An internal error occurred
+            errors:
+              description: Errors array for failed requests
+              type: array
+              items:
+                $ref: '#/components/schemas/standard_error'
           required:
             - http_status
-            - code
+            - http_code
+            - description
+    standard_error:
+      description: Error model
+      type: object
+      properties:
+        name:
+          description: Name of parameter causing the error
+          type: string
+          example: User's name
+        values:
+          description: Array of explaining messages for error
+          type: array
+          items:
+            type: string
+            description: Short description of error
+            example: You must declare a name while creating a new user
+      required:
+        - name
+        - values
+    standard_response_with_paging:
+      description: Standard response for collection requests
+      allOf:
+        - $ref: '#/components/schemas/standard_status'
+        - $ref: '#/components/schemas/standard_paging'
       required:
         - status
-  responses:
-    standard_response_bad_request:
-      description: Bad request response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_error_response'
-    standard_response_console:
-      description: OK
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_status'
-            properties:
-              data:
-                $ref: '#/components/schemas/console'
-    standard_response_console_list:
-      description: Partial Content
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_list'
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/console'
-    standard_response_created:
-      description: Resource created
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_response_status'
-    standard_response_employee:
-      description: OK
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_status'
-            properties:
-              data:
-                $ref: '#/components/schemas/employee'
-    standard_response_employee_list:
-      description: Partial Content
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_list'
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/employee'
-    standard_response_forbidden:
-      description: Forbidden response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_error_response'
-    standard_response_game:
-      description: OK
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_status'
-            properties:
-              data:
-                $ref: '#/components/schemas/game'
-    standard_response_game_list:
-      description: Partial Content
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_list'
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/game'
-    standard_response_internal_error:
-      description: Internal server error response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_response_status'
-    standard_response_no_content:
-      description: Successful operation
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_response_status'
-    standard_response_not_found:
-      description: Not found response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_error_response'
-    standard_response_return:
-      description: OK
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_status'
-            properties:
-              data:
-                $ref: '#/components/schemas/return'
-    standard_response_return_list:
-      description: Partial Content
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_list'
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/return'
-    standard_response_sale:
-      description: OK
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_status'
-            properties:
-              data:
-                $ref: '#/components/schemas/sale'
-    standard_response_sale_list:
-      description: Partial Content
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/standard_response_list'
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/sale'
-    standard_response_too_many_requests:
-      description: Too many requests
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_response_status'
-    standard_response_unauthorized:
-      description: Unauthorized response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/standard_error_response'
+        - paging
+    standard_paging:
+      description: Paging model for paginated responses.
+      type: object
+      properties:
+        paging:
+          type: object
+          properties:
+            init:
+              description: Inital register (offset)
+              type: integer
+              format: int32
+              example: 2
+            limit:
+              description: Page size
+              type: integer
+              format: int32
+              example: 20
+            num_pages:
+              description: Pages total number
+              type: integer
+              format: int32
+              example: 6
+            total:
+              description: Registers total number
+              type: integer
+              format: int32
+              example: 10
+            start:
+              description: First register in list
+              type: integer
+              format: int32
+              example: 1
+            end:
+              description: Last register in list
+              type: integer
+              format: int32
+              example: 256
+            links:
+              type: object
+              description: Hypermedia links to ease list navigation
+              properties:
+                self: 
+                  description: Current page link
+                  $ref: '#/components/schemas/standard_link'
+                previous: 
+                  description: Link to previous page
+                  $ref: '#/components/schemas/standard_link'
+                next: 
+                  description: Link to next page
+                  $ref: '#/components/schemas/standard_link'
+                first: 
+                  description: Link to first page
+                  $ref: '#/components/schemas/standard_link'
+                last: 
+                  description: Link to last page
+                  $ref: '#/components/schemas/standard_link'
+              required:
+                - previous
+                - next
+          required:
+            - init
+            - limit
+            - links
+    standard_link:
+      description: URL link to page
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://api.server.com/api/v1/games$init=0&$limit=25
+    # RESPONSE HEADERS
+    location_header:
+      type: string
+      format: url
+      description: URL of the newly created resource
+      example: http://example.api.com/v1/resources/29600a37-8851-441f-842b-59c6e9af4c3b
+    # REUSABLE SCHEMAS
+    _uuid:
+      description: Identifier of the resource, in UUID v4 format
+      type: string
+      format: uuid
+      minLength: 36
+      maxLength: 36
+      pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+      example: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+    _console_name:
+      description: Console's name
+      type: string
+      minLength: 1
+      maxLength: 50
+      pattern: ^[0-9a-zA-Z:\s]{1,50}$
+      example: Nintendo Switch
+    _console_brand:
+      description: Console's brand
+      type: string
+      minLength: 1
+      maxLength: 50
+      pattern: ^[0-9a-zA-Z:\s]{1,50}$
+      example: Sony Computer Entertainment
+    _console_launch_date:
+      description: Date of the console's launch, ISO-8601 format
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+    _console_resupply_date:
+      description: Date of console's resupply, ISO-8601 format
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+    _game_name:
+      description: Game's name
+      type: string
+      minLength: 1
+      maxLength: 50
+      pattern: ^[0-9a-zA-Z:\s]{1,50}$
+      example: Candy Crush
+    _game_developer:
+      description: Developer company of the game
+      type: string
+      minLength: 1
+      maxLength: 50
+      pattern: ^[0-9a-zA-Z:*\-*\s]{1,50}$
+      example: Frictional Games
+    _game_category:
+      description: Category of the game
+      type: string
+      minLength: 1
+      maxLength: 30
+      pattern: ^[0-9a-zA-Z\s]{1,30}$
+      example: First Person Shooter
+    _game_launch_date:
+      description: Date of the game's launch, ISO-8601 format
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+    _game_resupply_date:
+      description: Date of game's resupply, ISO-8601 format
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+    _PEGI:
+        description: Pan European Game Information
+        type: integer
+        format: int32
+        enum:
+          - 3
+          - 7
+          - 12
+          - 16
+          - 18
+        example: 18
+    _number_of_players:
+      description: How many players can play at the same time
+      type: integer
+      format: int32
+      maxLength: 2
+      example: 2
+    _synopsis:
+      description: Short description of the game
+      maxLength: 150
+      type: string
+      pattern: ^[0-9a-zA-Z\s:*\.*,*\-*'*\(*\)*]{1,150}$
+      example: The game follows a nameless knight, as they traverse an ancient, plague-infested kingdom inhabited by various insects, known as Hallownest.
+    _price:
+      description: Price in euros
+      type: number
+      format: double
+      minimum: 0.01
+      example: 499.99
+    _parental_advisory: 
+      description: Array of advisories for explicit content
+      type: array
+      items:
+        type: string
+        maxLength: 20
+        pattern: ^[0-9a-zA-Z\s]{1,20}$
+      example:
+        - violence
+        - drugs
+    _products_array:
+      description: Array of products (games or consoles)
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/components/schemas/console'
+          - $ref: '#/components/schemas/game'
+      example:
+        - name: Playstation 5
+          brand: Sony Computer Entertainment
+          price: 499.99
+          launch_date: '2021-07-01T12:05:20+00:00'
+        - name: FIFA 21
+          developer: EA Sports
+          category: sports
+          PEGI: 3
+          number_of_players: 8
+          synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+          price: 59.99
+    _return_state:
+      type: string
+      description: Request state
+      enum:
+        - processing
+        - finished
+      example: finished
+    _products_return_date:
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+    _sale_state:
+      type: string
+      description: Sale state
+      enum:
+        - pending
+        - purchased
+        - shipped
+        - delivered
+        - canceled
+      example: delivered
+    _sale_delivery_date:
+      description: Delivery date
+      type: string
+      format: date-time
+      example: '2021-07-01T12:05:20+00:00'
+    _return_reason:
+      description: Returnment reason
+      type: string
+      maxLength: 150
+      pattern: ^[0-9a-zA-Z\s:*\.*,*\-*'*\(*\)*]{1,150}$
+      example: The console I acquired does not work
+    _employee:
+      description: Responsible employee
+      type: string
+      minLength: 1
+      maxLength: 10
+      pattern: ^[a-zA-Z]{1,10}$
+      example: mcarretero
+    _product_state:
+      type: string
+      description: Product state
+      enum:
+        - discontinued
+        - available
+        - soldout
+      example: available
+    # SPECIFIC MODELS SCHEMAS
+    console:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/_uuid'
+        name:
+          $ref: '#/components/schemas/_console_name'
+        brand:
+          $ref: '#/components/schemas/_console_brand'
+        price:
+          $ref: '#/components/schemas/_price'
+        state:
+          $ref: '#/components/schemas/_product_state'
+        launch_date:
+          $ref: '#/components/schemas/_console_launch_date'
+        resupply_date:
+          $ref: '#/components/schemas/_console_resupply_date'
+    game:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/_uuid'
+        name:
+          $ref: '#/components/schemas/_game_name'
+        developer:
+          $ref: '#/components/schemas/_game_developer'
+        category:
+          $ref: '#/components/schemas/_game_category'
+        PEGI:
+          $ref: '#/components/schemas/_PEGI'
+        parental_advisory:
+          $ref: '#/components/schemas/_parental_advisory'
+        number_of_players:
+          $ref: '#/components/schemas/_number_of_players'
+        synopsis:
+          $ref: '#/components/schemas/_synopsis'
+        price:
+          $ref: '#/components/schemas/_price'
+        state:
+          $ref: '#/components/schemas/_product_state'
+        launch_date:
+          $ref: '#/components/schemas/_game_launch_date'
+        resupply_date:
+          $ref: '#/components/schemas/_game_resupply_date'
+    return:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/_uuid'
+        employee:
+          description: Manager of the return
+          $ref: '#/components/schemas/_employee'
+        state:
+          $ref: '#/components/schemas/_return_state'
+        returned_products:
+          description: Products included in the request
+          $ref: '#/components/schemas/_products_array'
+        reason:
+          $ref: '#/components/schemas/_return_reason'
+        request_date:
+          description: Returnment request date
+          type: string
+          format: date-time
+          example: '2021-07-01T12:05:20+00:00'
+        return_date:
+          $ref: '#/components/schemas/_products_return_date'
+    sale:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/_uuid'
+        employee:
+          description: Manager of the order
+          $ref: '#/components/schemas/_employee'
+        state:
+          $ref: '#/components/schemas/_sale_state'
+        sale_products:
+          description: Products included in the sale
+          $ref: '#/components/schemas/_products_array'
+        sale_date:
+          description: Sale date
+          type: string
+          format: date-time
+          example: '2021-07-01T12:05:20+00:00'
+        delivery_date:
+          $ref: '#/components/schemas/_sale_delivery_date'
   requestBodies:
-    patch_console:
-      description: Request body with console properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              name:
-                description: Name of the console
-                $ref: '#/components/schemas/_name'
-              brand:
-                description: Brand of the console
-                $ref: '#/components/schemas/_name'
-                example: Sony Computer Entertainment
-              state:
-                $ref: '#/components/schemas/_stateProduct'
-              price:
-                $ref: '#/components/schemas/_price'
-              launchDate:
-                description: Date of the console's launch, ISO-8601 format
-                $ref: '#/components/schemas/_date'
-              resupplyDate:
-                description: Date of console's resupply, ISO-8601 format
-                $ref: '#/components/schemas/_date'
-    patch_employee:
-      description: Request body with employee properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              password:
-                $ref: '#/components/schemas/_password'
-              isActive:
-                $ref: '#/components/schemas/_isActive'
-    patch_game:
-      description: Request body with game properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              name:
-                description: Name of the game
-                $ref: '#/components/schemas/_name'
-              developer:
-                description: Developer company of the game
-                $ref: '#/components/schemas/_name'
-                example: Frictional Games
-              category:
-                description: Category of the game
-                $ref: '#/components/schemas/_name'
-                example: First Person Shooter
-              PEGI:
-                $ref: '#/components/schemas/_PEGI'
-              explicitContent: 
-                $ref: '#/components/schemas/_explicitContent'
-              numberOfPlayers:
-                $ref: '#/components/schemas/_numberOfPlayers'
-              synopsis:
-                $ref: '#/components/schemas/_synopsis'
-              price:
-                $ref: '#/components/schemas/_price'
-              state:
-                $ref: '#/components/schemas/_stateProduct'
-              launchDate:
-                description: Date of the game's launch, ISO-8601 format
-                $ref: '#/components/schemas/_date'
-              resupplyDate:
-                description: Date of game's resupply, ISO-8601 format
-                $ref: '#/components/schemas/_date'
-    patch_return:
-      description: Request body with return properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              state:
-                $ref: '#/components/schemas/_stateReturn'
-              returnedProducts:
-                description: Products included in the request
-                $ref: '#/components/schemas/_productsArray'
-              returnDate:
-                description: Date when the return was made
-                $ref: '#/components/schemas/_date'
-    patch_sale:
-      description: Request body with sale properties to modify
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              state:
-                $ref: '#/components/schemas/_stateSale'
-              saleProducts:
-                description: Products included in the sale
-                $ref: '#/components/schemas/_productsArray'
-              saleDate:
-                description: Date of the order
-                $ref: '#/components/schemas/_date'
-              deliveryDate:
-                description: Delivery date of the order
-                $ref: '#/components/schemas/_date'
     post_console:
       description: Request body with console properties
       required: true
@@ -1065,40 +992,21 @@ components:
             type: object
             properties:
               name:
-                description: Name of the console
-                $ref: '#/components/schemas/_name'
+                $ref: '#/components/schemas/_console_name'
               brand:
-                description: Brand of the console
-                $ref: '#/components/schemas/_name'
-                example: Sony Computer Entertainment
+                $ref: '#/components/schemas/_console_brand'
               price:
                 $ref: '#/components/schemas/_price'
-              launchDate:
-                description: Date of the console's launch, ISO-8601 format
-                $ref: '#/components/schemas/_date'
-              resupplyDate:
-                description: Date of console's resupply, ISO-8601 format
-                $ref: '#/components/schemas/_date'
+              launch_date:
+                $ref: '#/components/schemas/_console_launch_date'
             required:
               - name
               - brand
               - price
-              - launchDate
-    post_employee:
-      description: Request body with employee properties
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              login:
-                $ref: '#/components/schemas/_login'
-              password:
-                $ref: '#/components/schemas/_password'
-            required:
-              - login
-              - password
+              - launch_date
+          examples:
+            post_console_example:
+              $ref: '#/components/examples/post_console_example'
     post_game:
       description: Request body with game properties
       required: true
@@ -1108,42 +1016,30 @@ components:
             type: object
             properties:
               name:
-                description: Name of the game
-                $ref: '#/components/schemas/_name'
+                $ref: '#/components/schemas/_game_name'
               developer:
-                description: Developer company of the game
-                $ref: '#/components/schemas/_name'
-                example: Frictional Games
+                $ref: '#/components/schemas/_game_developer'
               category:
-                description: Category of the game
-                $ref: '#/components/schemas/_name'
-                example: First Person Shooter
+                $ref: '#/components/schemas/_game_category'
               PEGI:
                 $ref: '#/components/schemas/_PEGI'
-              explicitContent: 
-                $ref: '#/components/schemas/_explicitContent'
-              numberOfPlayers:
-                $ref: '#/components/schemas/_numberOfPlayers'
+              number_of_players:
+                $ref: '#/components/schemas/_number_of_players'
               synopsis:
                 $ref: '#/components/schemas/_synopsis'
               price:
                 $ref: '#/components/schemas/_price'
-              launchDate:
-                description: Date of the game's launch, ISO-8601 format
-                $ref: '#/components/schemas/_date'
-              resupplyDate:
-                description: Date of game's resupply, ISO-8601 format
-                $ref: '#/components/schemas/_date'
             required:
               - name
               - developer
               - category
               - PEGI
-              - explicitContent
-              - numberOfPlayers
+              - number_of_players
               - synopsis
               - price
-              - launchDate
+          examples:
+            post_game_example:
+              $ref: '#/components/examples/post_game_example'
     post_return:
       description: Request body with return properties
       required: true
@@ -1154,18 +1050,19 @@ components:
             properties:
               employee:
                 description: Manager of the return
-                $ref: '#/components/schemas/employee'
-              state:
-                $ref: '#/components/schemas/_stateReturn'
-              returnedProducts:
+                $ref: '#/components/schemas/_employee'
+              returned_products:
                 description: Products included in the request
-                $ref: '#/components/schemas/_productsArray'
+                $ref: '#/components/schemas/_products_array'
               reason:
-                $ref: '#/components/schemas/_reasonReturn'
+                $ref: '#/components/schemas/_return_reason'
             required:
               - employee
-              - returnedProducts
+              - returned_products
               - reason
+          examples:
+            post_return_example:
+              $ref: '#/components/examples/post_return_example'
     post_sale:
       description: Request body with sale properties
       required: true
@@ -1175,71 +1072,773 @@ components:
             type: object
             properties:
               employee:
-                description: Manager of the sale
-                $ref: '#/components/schemas/employee'
-              saleProducts:
+                description: Manager of the order
+                $ref: '#/components/schemas/_employee'
+              sale_products:
                 description: Products included in the sale
-                $ref: '#/components/schemas/_productsArray'
-              state:
-                $ref: '#/components/schemas/_stateSale'
-              saleDate:
-                description: Date of the order
-                $ref: '#/components/schemas/_date'
+                $ref: '#/components/schemas/_products_array'
             required:
-              - user
-              - orderProducts
-  parameters:
-    excludeParam:
-      in: query
-      name: $exclude
-      required: false
-      description: |
-        Array of resource attributes excluded in result.
-      schema:
-        type: string
-    expandParam:
-      in: query
-      name: $expand
-      required: false
-      description: |  
-        Array of subattributes to be expanded.
-      schema: 
-        type: string
-    limitParam:
-      in: query
-      name: $limit
+              - employee
+              - sale_products
+          examples:
+            post_sale_example:
+              $ref: '#/components/examples/post_sale_example'
+    patch_console:
+      description: Request body with console properties to modify
       required: true
-      description: | 
-        Maximum number of records per page.
-      schema:
-        type: integer
-        format: int32
-        default: 25
-        minimum: 0
-        maximum: 25
-    offsetParam:
-      in: query
-      name: $offset
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '#/components/schemas/_console_name'
+              brand:
+                $ref: '#/components/schemas/_console_brand'
+              state:
+                $ref: '#/components/schemas/_product_state'
+              price:
+                $ref: '#/components/schemas/_price'
+              launch_date:
+                $ref: '#/components/schemas/_console_launch_date'
+              resupply_date:
+                $ref: '#/components/schemas/_console_resupply_date'
+          examples:
+            patch_console_example:
+              $ref: '#/components/examples/patch_console_example'
+    patch_game:
+      description: Request body with game properties to modify
       required: true
-      description: | 
-        Page number. (First page is 0).
-      schema:
-        type: integer
-        format: int32
-        default: 0
-        minimum: 0
-    selectParam:
-      in: query
-      name: $select
-      required: false
-      description: | 
-        Array of the resource attributes that are included in result.
-      schema:
-        type: string
-    uuidParam:
-      name: uuid
-      in: path
-      description: Identifier of a resource, in UUID v4 format
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                $ref: '#/components/schemas/_game_name'
+              developer:
+                $ref: '#/components/schemas/_game_developer'
+              category:
+                $ref: '#/components/schemas/_game_category'
+              PEGI:
+                $ref: '#/components/schemas/_PEGI'
+              parental_advisory: 
+                $ref: '#/components/schemas/_parental_advisory'
+              number_of_players:
+                $ref: '#/components/schemas/_number_of_players'
+              synopsis:
+                $ref: '#/components/schemas/_synopsis'
+              price:
+                $ref: '#/components/schemas/_price'
+              state:
+                $ref: '#/components/schemas/_product_state'
+              launch_date:
+                $ref: '#/components/schemas/_game_launch_date'
+              resupply_date:
+                $ref: '#/components/schemas/_game_resupply_date'
+          examples:
+            patch_game_example:
+              $ref: '#/components/examples/patch_game_example'
+    patch_return:
+      description: Request body with return properties to modify
       required: true
-      schema:
-        $ref: '#/components/schemas/_uuid'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              state:
+                $ref: '#/components/schemas/_return_state'
+              returned_products:
+                $ref: '#/components/schemas/_products_array'
+              return_date:
+                $ref: '#/components/schemas/_products_return_date'
+          examples:
+            patch_return_example:
+              $ref: '#/components/examples/patch_return_example'
+    patch_sale:
+      description: Request body with sale properties to modify
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              state:
+                $ref: '#/components/schemas/_sale_state'
+              sale_products:
+                description: Products included in the sale
+                $ref: '#/components/schemas/_products_array'
+              delivery_date:
+                $ref: '#/components/schemas/_sale_delivery_date'
+          examples:
+            patch_sale_example:
+              $ref: '#/components/examples/patch_sale_example'
+  responses:
+    # COMMON RESPONSES
+    standard_created_response:
+      description: Resource created
+      headers:
+        Location:
+          description: Created resource location
+          schema:
+            $ref: '#/components/schemas/location_header'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response'
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/_uuid'
+            required:
+              - data
+          examples:
+            created_example:
+              $ref: '#/components/examples/created_example'
+    standard_updated_response:
+      description: Resource updated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response'
+          examples:
+            updated_example:
+              $ref: '#/components/examples/updated_example'
+    standard_deleted_response:
+      description: Resource deleted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response'
+          examples:
+            updated_example:
+              $ref: '#/components/examples/deleted_example'
+    standard_bad_request_response:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response'
+          examples:
+            bad_request_example:
+              $ref: '#/components/examples/bad_request_example'
+    standard_unauthorized_response:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error'
+          examples:
+            unauthorized_example:
+              $ref: '#/components/examples/unauthorized_example'
+    standard_forbidden_response:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error'
+          examples:
+            forbidden_example:
+              $ref: '#/components/examples/forbidden_example'
+    standard_not_found_response:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_error'
+          examples:
+            not_found_example:
+              $ref: '#/components/examples/not_found_example'
+    standard_too_many_requests_response:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response'
+          examples:
+            too_many_requests_example:
+              $ref: '#/components/examples/too_many_requests_example'
+    standard_internal_error_response:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/standard_response'
+          examples:
+            internalErrorExample:
+              $ref: '#/components/examples/internal_error_example'
+    # SPECIFIC RESPONSES
+    console_response:
+      description: Console data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response'
+            properties:
+              data:
+                $ref: '#/components/schemas/console'
+            required:
+              - data
+          examples:
+            console_response_example:
+              $ref: '#/components/examples/console_response_example'
+    console_list_response:
+      description: Collection of consoles data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_with_paging'
+            properties:
+              data:
+                type: object
+                properties:
+                  consoles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/console'
+            required:
+              - data
+          examples:
+            console_list_response_example:
+              $ref: '#/components/examples/console_list_response_example'
+    game_response:
+      description: Game data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response'
+            properties:
+              data:
+                $ref: '#/components/schemas/game'
+            required:
+              - data
+          examples:
+            game_response_example:
+              $ref: '#/components/examples/game_response_example'
+    game_list_response:
+      description: Collection of games data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_with_paging'
+            properties:
+              data:
+                type: object
+                properties:
+                  games:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/game'
+            required:
+              - data
+          examples:
+            game_list_response_example:
+              $ref: '#/components/examples/game_list_response_example'
+    return_response:
+      description: Return data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response'
+            properties:
+              data:
+                $ref: '#/components/schemas/return'
+            required:
+              - data
+          examples:
+            return_response_example:
+              $ref: '#/components/examples/return_response_example'
+    return_list_response:
+      description: Collection of returns data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_with_paging'
+            properties:
+              data:
+                type: object
+                properties:
+                  returns:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/return'
+            required:
+              - data
+          examples:
+            return_list_response_example:
+              $ref: '#/components/examples/return_list_response_example'
+    sale_response:
+      description: Sale data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response'
+            properties:
+              data:
+                $ref: '#/components/schemas/sale'
+            required:
+              - data
+          examples:
+            sale_response_example:
+              $ref: '#/components/examples/sale_response_example'
+    sale_list_response:
+      description: Collection of sales data obtained successfully
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/standard_response_with_paging'
+            properties:
+              data:
+                type: object
+                properties:
+                  sales:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/sale'
+            required:
+              - data
+          examples:
+            sale_list_response_example:
+              $ref: '#/components/examples/sale_list_response_example'
+  #
+  examples:
+    # REQUESTBODIES EXAMPLES
+    patch_console_example:
+      value:
+        price: 449.99
+        resupply_date: '2021-08-30T12:00:00+00:00'
+    #
+    patch_game_example:
+      value:
+        developer: EA Sports
+        state: discontinued
+    #
+    patch_return_example:
+      value:
+        reason: A different reason
+        return_date: '2021-07-03T12:00:00+00:00'
+    #
+    patch_sale_example:
+      value:
+        state: delivered
+    #
+    post_console_example:
+      value:
+        name: Nintendo Switch
+        brand: Nintendo
+        price: 299.99
+        launch_date: '2017-03-01T00:00:00+00:00'
+    #
+    post_game_example:
+      value:
+        name: Fallout 5
+        developer: Bethesda Game Studios
+        category: Action
+        PEGI: 16
+        number_of_players: 1
+        synopsis: Fallout 4 is an action role-playing game. The player explores the game's dilapidated world, completes various quests, helps out factions, and acquires experience points to level up and increase the abilities of their character.
+        price: 59.99
+    #
+    post_return_example:
+      value:
+        employee: mcarretero
+        returned_products:
+          - name: Playstation 5
+            brand: Sony Computer Entertainment
+            price: 499.99
+            launch_date: '2021-07-01T12:05:20+00:00'
+          - name: FIFA 21
+            developer: EA Sports
+            category: sports
+            PEGI: 3
+            number_of_players: 8
+            synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+            price: 59.99
+        reason: I don't like them anymore
+    #
+    post_sale_example:
+      value: 
+        employee: jdlpg
+        sale_products:
+          - name: Nintendo Switch
+            brand: Nintendo
+            price: 299.99
+            launch_date: '2017-03-01T00:00:00+00:00'
+    #
+    created_example:
+      value:
+        status:
+          http_status: Created
+          http_code: 201
+          description: Resource created correctly
+        data:
+          id: 4ee55eac-78ac-4528-b863-75b4a482d33f
+    #
+    updated_example:
+      value:
+        http_status: Updated
+        http_code: 200
+        description: Resource updated correctly
+    #
+    deleted_example:
+      value:
+        http_status: Deleted
+        http_code: 200
+        description: Resource deleted correctly
+    #
+    bad_request_example:
+      value:
+        http_status: Bad request
+        http_code: 400
+        description: Request is not properly formatted
+        errors:
+          - name: description
+            message:
+              - description field has invalid values
+          - name: name
+            message:
+              - name field has invalid values
+    #
+    unauthorized_example:
+      value:
+        http_status: Unauthorized
+        http_code: 401
+        description: You must login first
+    #
+    forbidden_example:
+      value:
+        http_status: Forbidden resource
+        http_code: 403
+        description: You don't have access to the requested resource
+    #
+    not_found_example:
+      value:
+        http_status: Not found
+        http_code: 404
+        description: Couldn't found the resource
+    #
+    too_many_requests_example:
+      value:
+        http_status: Too many requests
+        http_code: 429
+        description: You have reached request limit quota
+    #
+    internal_error_example:
+      value:
+        http_status: Internal server error
+        http_code: 500
+        description: Unexpected error occurred
+    #
+    # SPECIFIC RESPONSES EXAMPLES
+    console_response_example:
+      value:
+        status:
+          http_status: Success
+          http_code: 200
+          description: Console data obtained successfully
+        data:
+          id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+          name: Playstation 5
+          brand: Sony Computer Entertainment
+          price: 499.99
+          state: available
+          launch_date: '2021-07-01T12:05:20+00:00'
+          resupply_date: '2021-07-21T12:00:00+00:00'
+    console_list_response_example:
+      value:
+        status:
+          http_status: Partial content
+          http_code: 206
+          description: Collection of consoles data obtained successfully
+        paging:
+          init: 3
+          limit: 3
+          num_pages: 3
+          total: 9
+          start: 3
+          end: 5
+          links:
+            self:
+              href: '/consoles?$init=3&amp;$limit=3'
+            previous:
+              href: '/consoles?$init=0&amp;$limit=3'
+            next:
+              href: '/consoles?$init=6&amp;$limit=3'
+            first:
+              href: '/consoles?$init=0&amp;$limit=3'
+            last:
+              href: '/consoles?$init=6&amp;$limit=3'
+        data:
+          consoles:
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              name: Playstation 5
+              brand: Sony Computer Entertainment
+              price: 499.99
+              state: available
+              launch_date: '2021-07-01T12:05:20+00:00'
+              resupply_date: '2021-07-21T12:00:00+00:00'
+            - id: 2a49cd1a-1990-32g1-bd6a-0997114517f6
+              name: XBOX Series X
+              brand: Microsoft
+              price: 549.99
+              state: available
+              launch_date: '2021-04-01T12:05:20+00:00'
+              resupply_date: '2021-08-03T12:00:00+00:00'
+    #
+    game_response_example:
+      value:
+        status:
+          http_status: Success
+          http_code: 200
+          description: Game data obtained successfully
+        data:
+          id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+          name: Fallout 5
+          developer: Bethesda Game Studios
+          category: Action
+          PEGI: 16
+          parental_advisory:
+            - violence
+            - drugs
+          number_of_players: 1
+          synopsis: Fallout 4 is an action role-playing game. The player explores the game's dilapidated world, completes various quests, helps out factions, and acquires experience points to level up and increase the abilities of their character.
+          price: 59.99
+          state: soldout
+          launch_date: '2021-04-19T12:05:20+00:00'
+          resupply_date: '2021-07-21T12:00:00+00:00'
+    game_list_response_example:
+      value:
+        status:
+          http_status: Partial content
+          http_code: 206
+          description: Collection of games data obtained successfully
+        paging:
+          init: 10
+          limit: 2
+          num_pages: 200
+          total: 2000
+          start: 10
+          end: 29
+          links:
+            self:
+              href: '/games?$init=10&amp;$limit=2'
+            previous:
+              href: '/games?$init=8&amp;$limit=2'
+            next:
+              href: '/games?$init=12&amp;$limit=2'
+            first:
+              href: '/games?$init=0&amp;$limit=2'
+            last:
+              href: '/games?$init=1999&amp;$limit=2'
+        data:
+          games:
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              name: Fallout 5
+              developer: Bethesda Game Studios
+              category: action
+              PEGI: 16
+              parental_advisory:
+                - violence
+                - drugs
+              number_of_players: 1
+              synopsis: Fallout 4 is an action role-playing game. The player explores the game's dilapidated world, completes various quests, helps out factions, and acquires experience points to level up and increase the abilities of their character
+              price: 59.99
+              state: soldout
+              launch_date: '2021-04-19T12:05:20+00:00'
+              resupply_date: '2021-07-21T12:00:00+00:00'
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              name: FIFA 21
+              developer: EA Sports
+              category: sports
+              PEGI: 3
+              number_of_players: 8
+              synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+              price: 59.99
+              state: available
+              launch_date: '2020-09-19T00:00:00+00:00'
+              resupply_date: '2021-06-18T12:00:00+00:00'
+    #
+    return_response_example:
+      value:
+        status:
+          http_status: Success
+          http_code: 200
+          description: Return data obtained successfully
+        data:
+          id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+          employee: mcarretero
+          state: processing
+          returned_products:
+            - name: Playstation 5
+              brand: Sony Computer Entertainment
+              price: 499.99
+              launch_date: '2021-07-01T12:05:20+00:00'
+            - name: FIFA 21
+              developer: EA Sports
+              category: sports
+              PEGI: 3
+              number_of_players: 8
+              synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+              price: 59.99
+          reason: I don't like them anymore
+          request_date: '2021-04-19T12:05:20+00:00'
+          return_date: '2021-04-21T15:07:54+00:00'
+    return_list_response_example:
+      value:
+        status:
+          http_status: Partial content
+          http_code: 206
+          description: Collection of returns data obtained successfully
+        paging:
+          init: 10
+          limit: 2
+          num_pages: 200
+          total: 2000
+          start: 10
+          end: 29
+          links:
+            self:
+              href: '/returns?$init=10&amp;$limit=2'
+            previous:
+              href: '/returns?$init=8&amp;$limit=2'
+            next:
+              href: '/returns?$init=12&amp;$limit=2'
+            first:
+              href: '/returns?$init=0&amp;$limit=2'
+            last:
+              href: '/returns?$init=1999&amp;$limit=2'
+        data:
+          returns:
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              employee: mcarretero
+              state: processing
+              returned_products:
+                - name: Playstation 5
+                  brand: Sony Computer Entertainment
+                  price: 499.99
+                  launch_date: '2021-07-01T12:05:20+00:00'
+                - name: FIFA 21
+                  developer: EA Sports
+                  category: sports
+                  PEGI: 3
+                  number_of_players: 8
+                  synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+                  price: 59.99
+              reason: I don't like them anymore
+              request_date: '2021-04-19T12:05:20+00:00'
+              return_date: '2021-07-08T15:07:54+00:00'
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              employee: mcarretero
+              state: finished
+              returned_products:
+                - name: Playstation 4
+                  brand: Sony Computer Entertainment
+                  price: 399.99
+                  launch_date: '2016-04-21T00:00:00+00:00'
+                - name: FIFA 15
+                  developer: EA Sports
+                  category: sports
+                  PEGI: 3
+                  number_of_players: 4
+                  synopsis: FIFA 15 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+                  price: 59.99
+              reason: I decided to buy a pc
+              request_date: '2021-04-22T12:05:20+00:00'
+              return_date: '2016-04-24T13:22:41+00:00'
+    #
+    sale_response_example:
+      value:
+        status:
+          http_status: Success
+          http_code: 200
+          description: Sale data obtained successfully
+        data:
+          id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+          employee: jdlpg
+          state: delivered
+          sale_products:
+            - name: Playstation 5
+              brand: Sony Computer Entertainment
+              price: 499.99
+              launch_date: '2021-07-01T12:05:20+00:00'
+            - name: FIFA 21
+              developer: EA Sports
+              category: sports
+              PEGI: 3
+              number_of_players: 8
+              synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+              price: 59.99
+          sale_date: '2021-07-07T15:07:54+00:00'
+          delivery_date: '2021-07-08T12:01:12+00:00'
+    sale_list_response_example:
+      value:
+        status:
+          http_status: Partial content
+          http_code: 206
+          description: Collection of sales data obtained successfully
+        paging:
+          init: 10
+          limit: 2
+          num_pages: 200
+          total: 2000
+          start: 10
+          end: 29
+          links:
+            self:
+              href: '/sales?$init=10&amp;$limit=2'
+            previous:
+              href: '/sales?$init=8&amp;$limit=2'
+            next:
+              href: '/sales?$init=12&amp;$limit=2'
+            first:
+              href: '/sales?$init=0&amp;$limit=2'
+            last:
+              href: '/sales?$init=1999&amp;$limit=2'
+        data:
+          returns:
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              employee: jdlpg
+              state: delivered
+              sale_products:
+                - name: Playstation 5
+                  brand: Sony Computer Entertainment
+                  price: 499.99
+                  launch_date: '2021-07-01T12:05:20+00:00'
+                - name: FIFA 21
+                  developer: EA Sports
+                  category: sports
+                  PEGI: 3
+                  number_of_players: 8
+                  synopsis: FIFA 21 is a football simulation video game published by Electronic Arts as part of the FIFA series.
+                  price: 59.99
+              sale_date: '2021-07-07T15:07:54+00:00'
+              delivery_date: '2021-07-08T12:01:12+00:00'
+            - id: 1b90aa6b-4720-48d2-ac1d-4229668233e5
+              employee: jdlpg
+              state: shipped
+              sale_products:
+                - name: Playstation 5
+                  brand: Sony Computer Entertainment
+                  price: 499.99
+                  launch_date: '2021-07-01T12:05:20+00:00'
+                - name: Fallout 5
+                  developer: Bethesda Game Studios
+                  category: action
+                  PEGI: 16
+                  number_of_players: 1
+                  synopsis: Fallout 4 is an action role-playing game. The player explores the game's dilapidated world, completes various quests, helps out factions, and acquires experience points to level up and increase the abilities of their character
+                  price: 59.99
+              sale_date: '2021-07-01T15:07:54+00:00'
+              delivery_date: '2021-07-02T12:00:00+00:00'
